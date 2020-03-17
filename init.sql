@@ -1,6 +1,6 @@
 CREATE TABLE Food
 (
-    fid INTEGER NOT NULL,
+    fid INTEGER,
     name VARCHAR(50),
     type VARCHAR(20),
     PRIMARY KEY (fid)
@@ -8,7 +8,8 @@ CREATE TABLE Food
 
 CREATE TABLE Restaurants
 (
-    rid INTEGER NOT NULL,
+    rid INTEGER,
+    name VARCHAR(50),
     minDeliveryCost FLOAT,
     PRIMARY KEY (rid)
 );
@@ -25,52 +26,77 @@ CREATE TABLE Sells
 
 CREATE TABLE Customers
 (
-    cid INTEGER NOT NULL,
+    cEmail INTEGER,
     reward INTEGER,
     creditCard INTEGER,
     --Credit card has to have certain length
     lastOrder INTEGER,
-    PRIMARY KEY (cid),
+    PRIMARY KEY (cEmail),
+    FOREIGN KEY (cEmail) REFERENCES Users,
     FOREIGN KEY (lastOrder) REFERENCES OrderArchive
 );
 
 CREATE TABLE Orders -- WIP
 (
     oid INTEGER NOT NULL,
-    PRIMARY KEY (oid, rid, cid, did, orderDate)
+    PRIMARY KEY (oid, rid, cEmail, dEmail, orderDate)
 );
 
 CREATE TABLE OrderArchive --WIP
 (
-    oid INTEGER NOT NULL,
+    oid INTEGER,
     rid INTEGER NOT NULL,
-    cid INTEGER NOT NULL,
-    did INTEGER NOT NULL,
+    cEmail VARCHAR(50) NOT NULL,
+    dEmail VARCHAR(50) NOT NULL,
     totalCost FLOAT,
     location VARCHAR(50),
     paymentType VARCHAR(20),
     orderDate DATE,
     PRIMARY KEY (oid),
     FOREIGN KEY (rid) REFERENCES Restaurants,
-    FOREIGN KEY (cid) REFERENCES Customers,
-    FOREIGN KEY (did) REFERENCES DeliveryRiders
+    FOREIGN KEY (cEmail) REFERENCES Customers,
+    FOREIGN KEY (dEmail) REFERENCES DeliveryRiders
 );
 
 CREATE TABLE DeliveryRiders
 (
     --WIP
-    did INTEGER NOT NULL,
+    dEmail VARCHAR(50),
     salary FLOAT,
     deliveryStatus VARCHAR(20),
     numDelivered INTEGER,
-    PRIMARY KEY (did)
+    PRIMARY KEY (dEmail),
+    FOREIGN KEY (dEmail) REFERENCES Users
 );
 
-CREATE TABLE Promotions ( -- WIP
+CREATE TABLE Promotions
+(
+    -- WIP
     pid INTEGER NOT NULL,
     startDate DATE,
     endDate DATE,
     description VARCHAR(50),
     discountAmt FLOAT,
     PRIMARY KEY (pid)
+);
+
+CREATE TABLE Users
+(
+    email VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY (email)
+);
+
+CREATE TABLE RestaurantStaffs
+(
+    rEmail VARCHAR(50),
+    PRIMARY KEY (rEmail),
+    FOREIGN KEY (rEmail) REFERENCES Users
+);
+
+CREATE TABLE Managers
+(
+    mEmail VARCHAR(50),
+    PRIMARY KEY (mEmail),
+    FOREIGN KEY (Email) REFERENCES Users
 );
