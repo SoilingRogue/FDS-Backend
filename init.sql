@@ -1,9 +1,52 @@
+CREATE TABLE Users
+(
+    email VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY (email)
+);
+
+CREATE TABLE RestaurantStaffs
+(
+    rEmail VARCHAR(50),
+    PRIMARY KEY (rEmail),
+    FOREIGN KEY (rEmail) REFERENCES Users
+);
+
+CREATE TABLE Managers
+(
+    mEmail VARCHAR(50),
+    PRIMARY KEY (mEmail),
+    FOREIGN KEY (mEmail) REFERENCES Users
+);
+
+CREATE TABLE Customers
+(
+    cEmail INTEGER,
+    reward INTEGER,
+    creditCard INTEGER,
+    --Credit card has to have certain length
+    lastOrder INTEGER,
+    PRIMARY KEY (cEmail),
+    FOREIGN KEY (cEmail) REFERENCES Users,
+    FOREIGN KEY (lastOrder) REFERENCES OrderArchive
+);
+
+CREATE TABLE DeliveryRiders
+(
+    --WIP
+    dEmail VARCHAR(50),
+    salary FLOAT,
+    deliveryStatus VARCHAR(20),
+    numDelivered INTEGER,
+    PRIMARY KEY (dEmail),
+    FOREIGN KEY (dEmail) REFERENCES Users
+);
+
 CREATE TABLE Food
 (
-    fid INTEGER,
-    name VARCHAR(50),
+    fName VARCHAR(50),
     type VARCHAR(20),
-    PRIMARY KEY (fid)
+    PRIMARY KEY (fName)
 );
 
 CREATE TABLE Restaurants
@@ -18,22 +61,10 @@ CREATE TABLE Restaurants
 CREATE TABLE Sells
 (
     rid INTEGER NOT NULL,
-    fid INTEGER NOT NULL,
+    fName VARCHAR(50) NOT NULL,
     PRIMARY KEY (rid, fid),
-    FOREIGN KEY (rid) REFERENCES Restaurants,
-    FOREIGN KEY (fid) REFERENCES Food
-);
-
-CREATE TABLE Customers
-(
-    cEmail INTEGER,
-    reward INTEGER,
-    creditCard INTEGER,
-    --Credit card has to have certain length
-    lastOrder INTEGER,
-    PRIMARY KEY (cEmail),
-    FOREIGN KEY (cEmail) REFERENCES Users,
-    FOREIGN KEY (lastOrder) REFERENCES OrderArchive
+    FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE,
+    FOREIGN KEY (fName) REFERENCES Food
 );
 
 CREATE TABLE Orders -- WIP
@@ -58,17 +89,6 @@ CREATE TABLE OrderArchive --WIP
     FOREIGN KEY (dEmail) REFERENCES DeliveryRiders
 );
 
-CREATE TABLE DeliveryRiders
-(
-    --WIP
-    dEmail VARCHAR(50),
-    salary FLOAT,
-    deliveryStatus VARCHAR(20),
-    numDelivered INTEGER,
-    PRIMARY KEY (dEmail),
-    FOREIGN KEY (dEmail) REFERENCES Users
-);
-
 CREATE TABLE Promotions
 (
     -- WIP
@@ -78,25 +98,4 @@ CREATE TABLE Promotions
     description VARCHAR(50),
     discountAmt FLOAT,
     PRIMARY KEY (pid)
-);
-
-CREATE TABLE Users
-(
-    email VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY (email)
-);
-
-CREATE TABLE RestaurantStaffs
-(
-    rEmail VARCHAR(50),
-    PRIMARY KEY (rEmail),
-    FOREIGN KEY (rEmail) REFERENCES Users
-);
-
-CREATE TABLE Managers
-(
-    mEmail VARCHAR(50),
-    PRIMARY KEY (mEmail),
-    FOREIGN KEY (Email) REFERENCES Users
 );
