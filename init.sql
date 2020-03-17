@@ -1,3 +1,15 @@
+DROP TABLE IF EXISTS Users CASCADE;
+DROP TABLE IF EXISTS RestaurantStaff CASCADE;
+DROP TABLE IF EXISTS Managers CASCADE;
+DROP TABLE IF EXISTS Customers CASCADE;
+DROP TABLE IF EXISTS DeliveryRiders CASCADE;
+DROP TABLE IF EXISTS Food CASCADE;
+DROP TABLE IF EXISTS Restaurants CASCADE;
+DROP TABLE IF EXISTS Sells CASCADE;
+DROP TABLE IF EXISTS Orders CASCADE;
+DROP TABLE IF EXISTS OrderArchive CASCADE;
+DROP TABLE IF EXISTS Promotions CASCADE;
+
 CREATE TABLE Users
 (
     email VARCHAR(50),
@@ -5,7 +17,7 @@ CREATE TABLE Users
     PRIMARY KEY (email)
 );
 
-CREATE TABLE RestaurantStaffs
+CREATE TABLE RestaurantStaff
 (
     rEmail VARCHAR(50),
     PRIMARY KEY (rEmail),
@@ -21,7 +33,7 @@ CREATE TABLE Managers
 
 CREATE TABLE Customers
 (
-    cEmail INTEGER,
+    cEmail VARCHAR(50),
     reward INTEGER,
     creditCard INTEGER,
     --Credit card has to have certain length
@@ -62,15 +74,17 @@ CREATE TABLE Sells
 (
     rid INTEGER NOT NULL,
     fName VARCHAR(50) NOT NULL,
-    PRIMARY KEY (rid, fid),
+    status VARCHAR(20) NOT NULL,
+
+    PRIMARY KEY (rid, fName),
     FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE,
     FOREIGN KEY (fName) REFERENCES Food
 );
 
 CREATE TABLE Orders -- WIP
 (
-    oid INTEGER NOT NULL,
-    PRIMARY KEY (oid, rid, cEmail, dEmail, orderDate)
+    oid INTEGER NOT NULL
+    -- PRIMARY KEY (oid, rid, cEmail, dEmail, orderDate)
 );
 
 CREATE TABLE OrderArchive --WIP

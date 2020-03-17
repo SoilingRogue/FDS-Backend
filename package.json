@@ -1,5 +1,5 @@
 {
-  "name": "fds-api",
+  "name": "fds-backend",
   "version": "1.0.0",
   "description": "FDS Backend",
   "main": "server.js",
