@@ -39,8 +39,7 @@ CREATE TABLE Customers
     --Credit card has to have certain length
     lastOrder INTEGER,
     PRIMARY KEY (cEmail),
-    FOREIGN KEY (cEmail) REFERENCES Users,
-    FOREIGN KEY (lastOrder) REFERENCES OrderArchive
+    FOREIGN KEY (cEmail) REFERENCES Users
 );
 
 CREATE TABLE DeliveryRiders

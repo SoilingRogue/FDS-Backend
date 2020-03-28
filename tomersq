@@ -1,0 +1,16 @@
+              List of relations
+ Schema |      Name       | Type  |  Owner   
+--------+-----------------+-------+----------
+ public | customers       | table | postgres
+ public | deliveryriders  | table | postgres
+ public | food            | table | postgres
+ public | managers        | table | postgres
+ public | orderarchive    | table | postgres
+ public | orders          | table | postgres
+ public | promotions      | table | postgres
+ public | restaurants     | table | postgres
+ public | restaurantstaff | table | postgres
+ public | sells           | table | postgres
+ public | users           | table | postgres
+(11 rows)
+
