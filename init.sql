@@ -330,10 +330,6 @@ CREATE TABLE HasSchedule
     FOREIGN KEY (id) REFERENCES HasShifts
 );
 
-
-
-
-
 -- OLD Version
 
 -- CREATE TABLE Users
