@@ -9,16 +9,20 @@ const addUser = (req, res, db) => {
     db.query(
         `with ins as (
             insert into Users(email, password) 
-            values ('${email}', '${password}') 
+            values ('${email}', '${password}')
+            returning uId
         )
-        insert into ${userType} (${userTypeToEmailColMap.get(userType)}) values ('${email}')`,
+        insert into ${userType}
+        select ins.uId from ins
+        returning uId`,
         (error, results) => {
             if (error) {
                 console.log(error)
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            res.status(200).json({ email, userType, password })
+            console.log(results.rows[0])
+            res.status(200).json()
         })
 }
 

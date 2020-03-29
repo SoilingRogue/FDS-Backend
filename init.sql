@@ -1,3 +1,36 @@
+DROP TABLE IF EXISTS FoodItems CASCADE;
+DROP TABLE IF EXISTS FoodCategories CASCADE;
+DROP TABLE IF EXISTS BelongsTo CASCADE;
+DROP TABLE IF EXISTS Restaurants CASCADE;
+DROP TABLE IF EXISTS Sells CASCADE;
+DROP TABLE IF EXISTS Promotions CASCADE;
+DROP TABLE IF EXISTS RestaurantPromotions CASCADE;
+DROP TABLE IF EXISTS FDSPromotions CASCADE;
+DROP TABLE IF EXISTS HasPromotions CASCADE;
+DROP TABLE IF EXISTS Orders CASCADE;
+DROP TABLE IF EXISTS OrderSummaries CASCADE;
+DROP TABLE IF EXISTS ConsistsOf CASCADE;
+DROP TABLE IF EXISTS Applies CASCADE;
+DROP TABLE IF EXISTS Users CASCADE;
+DROP TABLE IF EXISTS Managers CASCADE;
+DROP TABLE IF EXISTS RestaurantStaff CASCADE;
+DROP TABLE IF EXISTS Customers CASCADE;
+DROP TABLE IF EXISTS DeliveryRiders CASCADE;
+DROP TABLE IF EXISTS Places CASCADE;
+DROP TABLE IF EXISTS Delivers CASCADE;
+DROP TABLE IF EXISTS CurrentlyDelivering CASCADE;
+DROP TABLE IF EXISTS Reviews CASCADE;
+DROP TABLE IF EXISTS Rates CASCADE;
+DROP TABLE IF EXISTS LocationHistories CASCADE;
+DROP TABLE IF EXISTS PartTime CASCADE;
+DROP TABLE IF EXISTS FullTime CASCADE;
+DROP TABLE IF EXISTS Shifts CASCADE;
+DROP TABLE IF EXISTS Days CASCADE;
+DROP TABLE IF EXISTS WWS CASCADE;
+DROP TABLE IF EXISTS MWS CASCADE;
+DROP TABLE IF EXISTS HasShifts CASCADE;
+DROP TABLE IF EXISTS HasSchedule CASCADE;
+
 -- NEW VERSION --
 -- Things to do:
 -- Resolve all the comments in each table
@@ -30,7 +63,7 @@ CREATE TABLE BelongsTo
     categories VARCHAR(50) NOT NULL,
     PRIMARY KEY (foodName, categories),
     FOREIGN KEY (foodName) REFERENCES FoodItems,
-    FOREIGN KEY (categories) REFERENCES FoodCategories,
+    FOREIGN KEY (categories) REFERENCES FoodCategories
 );
 
 -- Restaurant entities
@@ -70,6 +103,7 @@ CREATE TABLE RestaurantPromotions
     amount FLOAT,
     -- missing condition -> boolean or what??
     -- missing type -> not sure what this is + use int or varchar ???
+    PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
 );
 
@@ -77,6 +111,7 @@ CREATE TABLE FDSPromotions
 (
     pid INTEGER,
     -- missing type -> use int or varchar ???
+    PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
 );
 
@@ -140,51 +175,52 @@ CREATE TABLE Applies
 
 CREATE TABLE Users -- are we still keeping email & password ?
 (
+    uId SERIAL,
     email VARCHAR(50),
     password VARCHAR(50),
-    PRIMARY KEY (email)
+    PRIMARY KEY (uId)
 );
 
-CREATE TABLE FDSManagers
+CREATE TABLE Managers
 (
-    mEmail VARCHAR(50),
-    PRIMARY KEY (mEmail),
-    FOREIGN KEY (mEmail) REFERENCES Users
+    mId INTEGER,
+    PRIMARY KEY (mId),
+    FOREIGN KEY (mId) REFERENCES Users
 );
 
 CREATE TABLE RestaurantStaff
 (
-    rEmail VARCHAR(50),
-    PRIMARY KEY (rEmail),
-    FOREIGN KEY (rEmail) REFERENCES Users
+    rId INTEGER,
+    PRIMARY KEY (rId),
+    FOREIGN KEY (rId) REFERENCES Users
 );
 
 -- Customers missing locHistory ref, but locRef references customers so its ok right?
 -- Add in other missing attibutes such as creditcard etc if needed
 CREATE TABLE Customers
 (
-    cEmail VARCHAR(50),
+    cId INTEGER,
     rewardPoints INTEGER,
-    PRIMARY KEY (cEmail),
-    FOREIGN KEY (cEmail) REFERENCES Users
+    PRIMARY KEY (cId),
+    FOREIGN KEY (cId) REFERENCES Users
 );
 
 -- Add in other missing attibutes such as deliverystatus etc if needed
-CREATE TABLE Riders
+CREATE TABLE DeliveryRiders
 (
-    rEmail VARCHAR(50),
-    PRIMARY KEY (rEmail),
-    FOREIGN KEY (rEmail) REFERENCES Users
+    rId INTEGER,
+    PRIMARY KEY (rId),
+    FOREIGN KEY (rId) REFERENCES Users
 );
 
 -- Customer-order relations
 
-CREATE TABLE PLACES
+CREATE TABLE Places
 (
-    cEmail VARCHAR(50),
+    cId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (cEmail, oid),
-    FOREIGN KEY (cEmail) REFERENCES Customers,
+    PRIMARY KEY (cId, oid),
+    FOREIGN KEY (cId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -192,19 +228,19 @@ CREATE TABLE PLACES
 
 CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
 (
-    rEmail VARCHAR(50),
+    rId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (rEmail, oid),
-    FOREIGN KEY (rEmail) REFERENCES Riders,
+    PRIMARY KEY (rId, oid),
+    FOREIGN KEY (rId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 CREATE TABLE CurrentlyDelivering
 (
-    rEmail VARCHAR(50),
+    rId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (rEmail, oid),
-    FOREIGN KEY (rEmail) REFERENCES Riders,
+    PRIMARY KEY (rId, oid),
+    FOREIGN KEY (rId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -212,21 +248,21 @@ CREATE TABLE CurrentlyDelivering
 
 CREATE TABLE Reviews
 (
-    cEmail VARCHAR(50),
+    cId INTEGER,
     oid INTEGER,
     reviewTxt VARCHAR(100),
-    PRIMARY KEY (cEmail, oid),
-    FOREIGN KEY (cEmail) REFERENCES Customers,
+    PRIMARY KEY (cId, oid),
+    FOREIGN KEY (cId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 CREATE TABLE Rates -- diff from ER, currently linked to orders and not deliveries
 (
-    cEmail VARCHAR(50),
+    cId INTEGER,
     oid INTEGER,
     rating INTEGER,
-    PRIMARY KEY (cEmail, oid),
-    FOREIGN KEY (cEmail) REFERENCES Customers,
+    PRIMARY KEY (cId, oid),
+    FOREIGN KEY (cId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -237,33 +273,33 @@ CREATE TABLE Rates -- diff from ER, currently linked to orders and not deliverie
 -- Same for has relations for Customer-LocationHistories
 CREATE TABLE LocationHistories
 (
-    cid INTEGER,
+    cId INTEGER,
     address1 VARCHAR(50),
     address2 VARCHAR(50),
     address3 VARCHAR(50),
-    PRIMARY KEY (cid),
-    FOREIGN KEY (cid) REFERENCES CUstomers,
-    FOREIGN KEY (address1) REFERENCES Locations,
-    FOREIGN KEY (address2) REFERENCES Locations,
-    FOREIGN KEY (address3) REFERENCES Locations
+    PRIMARY KEY (cId),
+    FOREIGN KEY (cId) REFERENCES Customers
+    -- FOREIGN KEY (address1) REFERENCES Locations,
+    -- FOREIGN KEY (address2) REFERENCES Locations,
+    -- FOREIGN KEY (address3) REFERENCES Locations
 );
 
-CREATE TABLE Locations -- is there even a need for this table anymore given the above entity?
-(
-    address VARCHAR(50),
-    PRIMARY KEY (address)
-);
+-- CREATE TABLE Locations -- is there even a need for this table anymore given the above entity?
+-- (
+--     address VARCHAR(50),
+--     PRIMARY KEY (address)
+-- );
 
--- Riders entities - part time & full time
+-- DeliveryRiders entities - part time & full time
 
--- shifted commissions into riders instead
+-- shifted commissions into DeliveryRiders instead
 CREATE TABLE PartTime
 (
-    rid INTEGER,
+    rId INTEGER,
     weeklyBaseSalary FLOAT,
-    -- Primary key rid or (rid, weeklysalary) ? -> makes more sense for below imo cause discriminatory of every rider diff base
+    -- Primary key uId or (rid, weeklysalary) ? -> makes more sense for below imo cause discriminatory of every rider diff base
     PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES Riders
+    FOREIGN KEY (rid) REFERENCES DeliveryRiders
 );
 
 CREATE TABLE FullTime
@@ -272,7 +308,7 @@ CREATE TABLE FullTime
     monthlyBaseSalary FLOAT,
     -- Same concern as PartTime
     PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES Riders
+    FOREIGN KEY (rid) REFERENCES DeliveryRiders
 );
 
 -- Work schedule entities - part time, full time, days & shifts
@@ -298,12 +334,14 @@ CREATE TABLE Days
 CREATE TABLE WWS -- missing MakesUpOf relations
 (
     rid INTEGER,
+    PRIMARY KEY (rid),
     FOREIGN KEY (rid) REFERENCES PartTime
 );
 
 CREATE TABLE MWS -- missing MakesUpOf relations
 (
     rid INTEGER,
+    PRIMARY KEY (rid),
     FOREIGN KEY (rid) REFERENCES FullTime
 );
 
@@ -315,10 +353,11 @@ CREATE TABLE HasShifts
 (
     id INTEGER,
     sid INTEGER NOT NULL,
-    day INTEGER ,
+    day INTEGER,
+    name VARCHAR(10),
     PRIMARY KEY (id),
     FOREIGN KEY (sid) REFERENCES Shifts,
-    FOREIGN KEY (day) REFERENCES Days
+    FOREIGN KEY (day, name) REFERENCES Days
 );
 
 CREATE TABLE HasSchedule
