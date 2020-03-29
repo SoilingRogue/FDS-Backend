@@ -1,9 +1,3 @@
-const userTypeToEmailColMap = new Map()
-userTypeToEmailColMap.set('managers', 'memail')
-userTypeToEmailColMap.set('restaurantstaff', 'remail')
-userTypeToEmailColMap.set('deliveryriders', 'demail')
-userTypeToEmailColMap.set('customers', 'cemail')
-
 const addUser = (req, res, db) => {
     const { email, userType, password } = req.body
     db.query(
@@ -21,8 +15,7 @@ const addUser = (req, res, db) => {
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            console.log(results.rows[0])
-            res.status(200).json()
+            res.status(200).json({ uid: results.rows[0]['uid'], email })
         })
 }
 
@@ -30,16 +23,19 @@ const validateEmail = (req, res, db) => {
     console.log(req)
     const { email, userType } = req.body
     db.query(
-        `SELECT count(*) FROM Users WHERE email = '${email}'
-            and Users.email in (SELECT ${userTypeToEmailColMap.get(userType)} from ${userType})`,
+        `with temp as (
+            select uid, email
+            from Users U join ${userType} M using (uid)
+        )
+        select * from temp T where T.email = '${email}'`,
         (error, results) => {
             if (error) {
                 console.log(error)
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            if (results.rows[0]['count'] === '1')
-                res.status(200).json()
+            if (results.rowCount > 0)
+                res.status(200).json(results.rows[0])
             else
                 res.status(400).json({ dbError: 'User Not Found' })
         })
@@ -48,16 +44,20 @@ const validateEmail = (req, res, db) => {
 const validatePassword = (req, res, db) => {
     const { email, userType, password } = req.body
     db.query(
-        `SELECT count(*) FROM Users WHERE email = '${email}' AND password = '${password}'
-            and Users.email in (SELECT ${userTypeToEmailColMap.get(userType)} from ${userType})`,
+        `with temp as (
+            select uid, email, password
+            from Users U join ${userType} M using (uid)
+        )
+        select * from temp T where T.email = '${email}' AND T.password = '${password}'`,
         (error, results) => {
             if (error) {
                 console.log(error)
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            if (results.rows[0] && results.rows[0]['count'] === '1')
-                res.status(200).json()
+            console.log(results)
+            if (results.rowCount > 0)
+                res.status(200).json(results.rows[0])
             else
                 res.status(400).json({ dbError: `Validation failed` })
         })

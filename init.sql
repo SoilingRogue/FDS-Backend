@@ -176,41 +176,41 @@ CREATE TABLE Applies
 CREATE TABLE Users -- are we still keeping email & password ?
 (
     uId SERIAL,
-    email VARCHAR(50),
+    email VARCHAR(50) UNIQUE,
     password VARCHAR(50),
     PRIMARY KEY (uId)
 );
 
 CREATE TABLE Managers
 (
-    mId INTEGER,
-    PRIMARY KEY (mId),
-    FOREIGN KEY (mId) REFERENCES Users
+    uId INTEGER,
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES Users
 );
 
 CREATE TABLE RestaurantStaff
 (
-    rId INTEGER,
-    PRIMARY KEY (rId),
-    FOREIGN KEY (rId) REFERENCES Users
+    uId INTEGER,
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES Users
 );
 
 -- Customers missing locHistory ref, but locRef references customers so its ok right?
 -- Add in other missing attibutes such as creditcard etc if needed
 CREATE TABLE Customers
 (
-    cId INTEGER,
+    uId INTEGER,
     rewardPoints INTEGER,
-    PRIMARY KEY (cId),
-    FOREIGN KEY (cId) REFERENCES Users
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES Users
 );
 
 -- Add in other missing attibutes such as deliverystatus etc if needed
 CREATE TABLE DeliveryRiders
 (
-    rId INTEGER,
-    PRIMARY KEY (rId),
-    FOREIGN KEY (rId) REFERENCES Users
+    uId INTEGER,
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES Users
 );
 
 -- Customer-order relations
@@ -228,19 +228,19 @@ CREATE TABLE Places
 
 CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
 (
-    rId INTEGER,
+    uId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (rId, oid),
-    FOREIGN KEY (rId) REFERENCES DeliveryRiders,
+    PRIMARY KEY (uId, oid),
+    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 CREATE TABLE CurrentlyDelivering
 (
-    rId INTEGER,
+    uId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (rId, oid),
-    FOREIGN KEY (rId) REFERENCES DeliveryRiders,
+    PRIMARY KEY (uId, oid),
+    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -248,21 +248,21 @@ CREATE TABLE CurrentlyDelivering
 
 CREATE TABLE Reviews
 (
-    cId INTEGER,
+    uId INTEGER,
     oid INTEGER,
     reviewTxt VARCHAR(100),
-    PRIMARY KEY (cId, oid),
-    FOREIGN KEY (cId) REFERENCES Customers,
+    PRIMARY KEY (uId, oid),
+    FOREIGN KEY (uId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 CREATE TABLE Rates -- diff from ER, currently linked to orders and not deliveries
 (
-    cId INTEGER,
+    uId INTEGER,
     oid INTEGER,
     rating INTEGER,
-    PRIMARY KEY (cId, oid),
-    FOREIGN KEY (cId) REFERENCES Customers,
+    PRIMARY KEY (uId, oid),
+    FOREIGN KEY (uId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -273,12 +273,12 @@ CREATE TABLE Rates -- diff from ER, currently linked to orders and not deliverie
 -- Same for has relations for Customer-LocationHistories
 CREATE TABLE LocationHistories
 (
-    cId INTEGER,
+    uId INTEGER,
     address1 VARCHAR(50),
     address2 VARCHAR(50),
     address3 VARCHAR(50),
-    PRIMARY KEY (cId),
-    FOREIGN KEY (cId) REFERENCES Customers
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES Customers
     -- FOREIGN KEY (address1) REFERENCES Locations,
     -- FOREIGN KEY (address2) REFERENCES Locations,
     -- FOREIGN KEY (address3) REFERENCES Locations
@@ -295,20 +295,20 @@ CREATE TABLE LocationHistories
 -- shifted commissions into DeliveryRiders instead
 CREATE TABLE PartTime
 (
-    rId INTEGER,
+    uId INTEGER,
     weeklyBaseSalary FLOAT,
-    -- Primary key uId or (rid, weeklysalary) ? -> makes more sense for below imo cause discriminatory of every rider diff base
-    PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES DeliveryRiders
+    -- Primary key uId or (uId, weeklysalary) ? -> makes more sense for below imo cause discriminatory of every rider diff base
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES DeliveryRiders
 );
 
 CREATE TABLE FullTime
 (
-    rid INTEGER,
+    uId INTEGER,
     monthlyBaseSalary FLOAT,
     -- Same concern as PartTime
-    PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES DeliveryRiders
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES DeliveryRiders
 );
 
 -- Work schedule entities - part time, full time, days & shifts
@@ -333,16 +333,16 @@ CREATE TABLE Days
 
 CREATE TABLE WWS -- missing MakesUpOf relations
 (
-    rid INTEGER,
-    PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES PartTime
+    uId INTEGER,
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES PartTime
 );
 
 CREATE TABLE MWS -- missing MakesUpOf relations
 (
-    rid INTEGER,
-    PRIMARY KEY (rid),
-    FOREIGN KEY (rid) REFERENCES FullTime
+    uId INTEGER,
+    PRIMARY KEY (uId),
+    FOREIGN KEY (uId) REFERENCES FullTime
 );
 
 -- Work schedule relations
@@ -362,10 +362,10 @@ CREATE TABLE HasShifts
 
 CREATE TABLE HasSchedule
 (
-    rid INTEGER,
+    uId INTEGER,
     id INTEGER,
-    PRIMARY KEY (rid, id),
-    FOREIGN KEY (rid) REFERENCES WWS,
+    PRIMARY KEY (uId, id),
+    FOREIGN KEY (uId) REFERENCES WWS,
     FOREIGN KEY (id) REFERENCES HasShifts
 );
 
