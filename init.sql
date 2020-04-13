@@ -1,35 +1,65 @@
-DROP TABLE IF EXISTS FoodItems CASCADE;
-DROP TABLE IF EXISTS FoodCategories CASCADE;
-DROP TABLE IF EXISTS BelongsTo CASCADE;
-DROP TABLE IF EXISTS Restaurants CASCADE;
-DROP TABLE IF EXISTS Sells CASCADE;
-DROP TABLE IF EXISTS Promotions CASCADE;
-DROP TABLE IF EXISTS RestaurantPromotions CASCADE;
-DROP TABLE IF EXISTS FDSPromotions CASCADE;
-DROP TABLE IF EXISTS HasPromotions CASCADE;
-DROP TABLE IF EXISTS Orders CASCADE;
-DROP TABLE IF EXISTS OrderSummaries CASCADE;
-DROP TABLE IF EXISTS ConsistsOf CASCADE;
-DROP TABLE IF EXISTS Applies CASCADE;
-DROP TABLE IF EXISTS Users CASCADE;
-DROP TABLE IF EXISTS Managers CASCADE;
-DROP TABLE IF EXISTS RestaurantStaff CASCADE;
-DROP TABLE IF EXISTS Customers CASCADE;
-DROP TABLE IF EXISTS DeliveryRiders CASCADE;
-DROP TABLE IF EXISTS Places CASCADE;
-DROP TABLE IF EXISTS Delivers CASCADE;
-DROP TABLE IF EXISTS CurrentlyDelivering CASCADE;
-DROP TABLE IF EXISTS Reviews CASCADE;
-DROP TABLE IF EXISTS Rates CASCADE;
-DROP TABLE IF EXISTS LocationHistories CASCADE;
-DROP TABLE IF EXISTS PartTime CASCADE;
-DROP TABLE IF EXISTS FullTime CASCADE;
-DROP TABLE IF EXISTS Shifts CASCADE;
-DROP TABLE IF EXISTS Days CASCADE;
-DROP TABLE IF EXISTS WWS CASCADE;
-DROP TABLE IF EXISTS MWS CASCADE;
-DROP TABLE IF EXISTS HasShifts CASCADE;
-DROP TABLE IF EXISTS HasSchedule CASCADE;
+DROP TABLE IF EXISTS FoodItems
+CASCADE;
+DROP TABLE IF EXISTS BelongsTo
+CASCADE;
+DROP TABLE IF EXISTS Restaurants
+CASCADE;
+DROP TABLE IF EXISTS Sells
+CASCADE;
+DROP TABLE IF EXISTS Promotions
+CASCADE;
+DROP TABLE IF EXISTS RestaurantPromotions
+CASCADE;
+DROP TABLE IF EXISTS FDSPromotions
+CASCADE;
+DROP TABLE IF EXISTS HasPromotions
+CASCADE;
+DROP TABLE IF EXISTS Orders
+CASCADE;
+DROP TABLE IF EXISTS OrderSummaries
+CASCADE;
+DROP TABLE IF EXISTS ConsistsOf
+CASCADE;
+DROP TABLE IF EXISTS Applies
+CASCADE;
+DROP TABLE IF EXISTS Users
+CASCADE;
+DROP TABLE IF EXISTS Managers
+CASCADE;
+DROP TABLE IF EXISTS RestaurantStaff
+CASCADE;
+DROP TABLE IF EXISTS Customers
+CASCADE;
+DROP TABLE IF EXISTS DeliveryRiders
+CASCADE;
+DROP TABLE IF EXISTS Places
+CASCADE;
+DROP TABLE IF EXISTS Delivers
+CASCADE;
+DROP TABLE IF EXISTS CurrentlyDelivering
+CASCADE;
+DROP TABLE IF EXISTS Reviews
+CASCADE;
+DROP TABLE IF EXISTS Rates
+CASCADE;
+DROP TABLE IF EXISTS LocationHistories
+CASCADE;
+DROP TABLE IF EXISTS PartTime
+CASCADE;
+DROP TABLE IF EXISTS FullTime
+CASCADE;
+DROP TABLE IF EXISTS Shifts
+CASCADE;
+DROP TABLE IF EXISTS Days
+CASCADE;
+DROP TABLE IF EXISTS WWS
+CASCADE;
+DROP TABLE IF EXISTS MWS
+CASCADE;
+DROP TABLE IF EXISTS HasShifts
+CASCADE;
+DROP TABLE IF EXISTS HasSchedule
+CASCADE;
 
 -- NEW VERSION --
 -- Things to do:
@@ -42,20 +72,14 @@ DROP TABLE IF EXISTS HasSchedule CASCADE;
 CREATE TABLE FoodItems
 (
     foodName VARCHAR(50),
-    -- missing availability cause idk what that is
+    availability BIT,
     dailyStock INTEGER,
     currentStock INTEGER,
     price FLOAT,
     PRIMARY KEY (foodName)
 );
 
-CREATE TABLE FoodCategories -- might be unnecessary
-(
-    categories VARCHAR(50),
-    PRIMARY KEY (categories)
-);
-
--- Food relations
+-- Food-Category relations
 
 CREATE TABLE BelongsTo
 (
@@ -68,7 +92,7 @@ CREATE TABLE BelongsTo
 
 -- Restaurant entities
 
-CREATE TABLE Restaurants -- can discuss whether minDeliveryCost belongs here or if theres a better place
+CREATE TABLE Restaurants
 (
     rid INTEGER,
     rName VARCHAR(50),
@@ -102,7 +126,7 @@ CREATE TABLE RestaurantPromotions
     pid INTEGER,
     amount FLOAT,
     -- missing condition -> boolean or what??
-    -- missing type -> not sure what this is + use int or varchar ???
+    type INTEGER,
     PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
 );
@@ -110,7 +134,7 @@ CREATE TABLE RestaurantPromotions
 CREATE TABLE FDSPromotions
 (
     pid INTEGER,
-    -- missing type -> use int or varchar ???
+    type INTEGER,
     PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
 );
@@ -128,31 +152,23 @@ CREATE TABLE HasPromotions
 
 -- Order entities
 
-CREATE TABLE Orders --Not sure on promos -> supposed to contain the promoid/ discount price/ etc?
+CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will link both entities tgt
 (
     oid INTEGER,
     foodCost FLOAT NOT NULL,
     deliveryCost FLOAT NOT NULL,
     totalCost FLOAT NOT NULL,
     pointsUsed INTEGER,
-    fdsPromo INTEGER,
-    resPromo INTEGER,
     PRIMARY KEY (oid)
 );
-
-CREATE TABLE OrderSummaries -- Useless for now
-(
-    oid INTEGER,
-    PRIMARY KEY (oid)
-);
-
 
 -- Order-Food relations
 
-CREATE TABLE ConsistsOf -- Slight difference from the ER diagram - foodName used instead of rid
+CREATE TABLE ConsistsOf
 (
     oid INTEGER NOT NULL,
     foodName VARCHAR(50) NOT NULL,
+    quantity INTEGER,
     PRIMARY KEY (oid, foodName),
     FOREIGN KEY (oid) REFERENCES Orders,
     FOREIGN KEY (foodName) REFERENCES FoodItems
@@ -160,20 +176,18 @@ CREATE TABLE ConsistsOf -- Slight difference from the ER diagram - foodName used
 
 -- Order-Promotion relations
 
--- Missing Order-Restaurant promotions
-
-CREATE TABLE Applies
+CREATE TABLE Applies -- links both res & fds promos to order
 (
     oid INTEGER,
-    fdsPromo INTEGER,
-    PRIMARY KEY (oid, fdsPromo),
+    promo INTEGER,
+    PRIMARY KEY (oid, promo),
     FOREIGN KEY (oid) REFERENCES Orders,
-    FOREIGN KEY (fdsPromo) REFERENCES FDSPromotions
+    FOREIGN KEY (promo) REFERENCES Promotions
 );
 
 -- Users entities - consists of FDSManager, RestStaff, Riders & Customers
 
-CREATE TABLE Users -- are we still keeping email & password ?
+CREATE TABLE Users
 (
     uId SERIAL,
     email VARCHAR(50) UNIQUE,
@@ -195,20 +209,20 @@ CREATE TABLE RestaurantStaff
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
--- Customers missing locHistory ref, but locRef references customers so its ok right?
--- Add in other missing attibutes such as creditcard etc if needed
 CREATE TABLE Customers
 (
     uId INTEGER,
     rewardPoints INTEGER DEFAULT 0,
+    creditCard CHAR(16),
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
--- Add in other missing attibutes such as deliverystatus etc if needed
 CREATE TABLE DeliveryRiders
 (
     uId INTEGER,
+    deliveryStatus BIT,
+    commision FLOAT DEFAULT 0.0,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
@@ -235,15 +249,6 @@ CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
-CREATE TABLE CurrentlyDelivering
-(
-    uId INTEGER,
-    oid INTEGER,
-    PRIMARY KEY (uId, oid),
-    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
-    FOREIGN KEY (oid) REFERENCES Orders
-);
-
 -- Reviews & rates relations
 
 CREATE TABLE Reviews
@@ -256,21 +261,19 @@ CREATE TABLE Reviews
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
-CREATE TABLE Rates -- diff from ER, currently linked to orders and not deliveries
+CREATE TABLE Rates -- can consider having delivery id for delivers entity and use that ref here
 (
     uId INTEGER,
     oid INTEGER,
+    rid INTEGER,
     rating INTEGER,
     PRIMARY KEY (uId, oid),
     FOREIGN KEY (uId) REFERENCES Customers,
-    FOREIGN KEY (oid) REFERENCES Orders
+    FOREIGN KEY (rid, oid) REFERENCES Delivers
 );
 
 -- Location entities
 
--- Contains the 3 most recent locations right? locations all null should also be valid
--- OMITTED Contains relations for locationhistory-location due to the foreign key ref below
--- Same for has relations for Customer-LocationHistories
 CREATE TABLE LocationHistories
 (
     uId INTEGER,
@@ -279,25 +282,14 @@ CREATE TABLE LocationHistories
     address3 VARCHAR(50),
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Customers
-    -- FOREIGN KEY (address1) REFERENCES Locations,
-    -- FOREIGN KEY (address2) REFERENCES Locations,
-    -- FOREIGN KEY (address3) REFERENCES Locations
 );
-
--- CREATE TABLE Locations -- is there even a need for this table anymore given the above entity?
--- (
---     address VARCHAR(50),
---     PRIMARY KEY (address)
--- );
 
 -- DeliveryRiders entities - part time & full time
 
--- shifted commissions into DeliveryRiders instead
 CREATE TABLE PartTime
 (
     uId INTEGER,
     weeklyBaseSalary FLOAT,
-    -- Primary key uId or (uId, weeklysalary) ? -> makes more sense for below imo cause discriminatory of every rider diff base
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES DeliveryRiders
 );
@@ -306,7 +298,6 @@ CREATE TABLE FullTime
 (
     uId INTEGER,
     monthlyBaseSalary FLOAT,
-    -- Same concern as PartTime
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES DeliveryRiders
 );

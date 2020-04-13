@@ -79,6 +79,22 @@ const changePassword = (req, res, db) => {
         })
 }
 
+const changeCreditCard = (req, res, db) => {
+    const { uid, newCreditCard } = req.body
+    db.query(
+        `update customers U
+        set creditcard = '${newCreditCard}'
+        where U.uid = '${uid}'`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json()
+        })
+}
+
 const deleteUser = (req, res, db) => {
     const { uid } = req.body
     db.query(
@@ -99,5 +115,6 @@ module.exports = {
     validateEmail,
     validatePassword,
     changePassword,
+    changeCreditCard,
     deleteUser,
 }
