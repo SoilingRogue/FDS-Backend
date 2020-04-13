@@ -21,7 +21,7 @@ const db = new Pool({
     host: 'localhost',
     database: 'fdsdb',
     password: 'password',
-    port: 5432,
+    port: 5433,
 })
 
 // Controllers - aka, the db queries
@@ -50,6 +50,8 @@ app.use(morgan('combined')) // use 'tiny' or 'combined'
 app.post('/add_user', (req, res) => main.addUser(req, res, db))
 app.post('/validate_email', (req, res) => main.validateEmail(req, res, db))
 app.post('/validate_password', (req, res) => main.validatePassword(req, res, db))
+app.post('/change_password', (req, res) => main.changePassword(req, res, db))
+app.post('/delete_user', (req, res) => main.deleteUser(req, res, db))
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

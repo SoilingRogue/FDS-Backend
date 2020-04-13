@@ -185,14 +185,14 @@ CREATE TABLE Managers
 (
     uId INTEGER,
     PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users
+    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
 CREATE TABLE RestaurantStaff
 (
     uId INTEGER,
     PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users
+    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
 -- Customers missing locHistory ref, but locRef references customers so its ok right?
@@ -200,9 +200,9 @@ CREATE TABLE RestaurantStaff
 CREATE TABLE Customers
 (
     uId INTEGER,
-    rewardPoints INTEGER,
+    rewardPoints INTEGER DEFAULT 0,
     PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users
+    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
 -- Add in other missing attibutes such as deliverystatus etc if needed
@@ -210,7 +210,7 @@ CREATE TABLE DeliveryRiders
 (
     uId INTEGER,
     PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users
+    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
 
 -- Customer-order relations

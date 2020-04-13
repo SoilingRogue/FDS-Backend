@@ -8,14 +8,14 @@ const addUser = (req, res, db) => {
         )
         insert into ${userType}
         select ins.uId from ins
-        returning uId`,
+        returning *`,
         (error, results) => {
             if (error) {
                 console.log(error)
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            res.status(200).json({ uid: results.rows[0]['uid'], email })
+            res.status(200).json(results.rows[0])
         })
 }
 
@@ -45,7 +45,7 @@ const validatePassword = (req, res, db) => {
     const { email, userType, password } = req.body
     db.query(
         `with temp as (
-            select uid, email, password
+            select *
             from Users U join ${userType} M using (uid)
         )
         select * from temp T where T.email = '${email}' AND T.password = '${password}'`,
@@ -63,8 +63,41 @@ const validatePassword = (req, res, db) => {
         })
 }
 
+const changePassword = (req, res, db) => {
+    const { uid, newPassword } = req.body
+    db.query(
+        `update users U
+        set password = '${newPassword}'
+        where U.uid = '${uid}'`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json()
+        })
+}
+
+const deleteUser = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `delete from users U
+        where U.uid = '${uid}'`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json()
+        })
+}
+
 module.exports = {
     addUser,
     validateEmail,
     validatePassword,
+    changePassword,
+    deleteUser,
 }
