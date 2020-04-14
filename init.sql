@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS FoodItems
 CASCADE;
+DROP TABLE IF EXISTS FoodCategories
+CASCADE;
 DROP TABLE IF EXISTS BelongsTo
 CASCADE;
 DROP TABLE IF EXISTS Restaurants
@@ -79,6 +81,12 @@ CREATE TABLE FoodItems
     PRIMARY KEY (foodName)
 );
 
+CREATE TABLE FoodCategories
+(
+    categories VARCHAR(50),
+    PRIMARY KEY (categories)
+);
+
 -- Food-Category relations
 
 CREATE TABLE BelongsTo
@@ -94,8 +102,8 @@ CREATE TABLE BelongsTo
 
 CREATE TABLE Restaurants
 (
-    rid INTEGER,
-    rName VARCHAR(50),
+    rid SERIAL,
+    rName VARCHAR(50) UNIQUE,
     minDeliveryCost FLOAT,
     PRIMARY KEY (rid)
 );
@@ -104,12 +112,55 @@ CREATE TABLE Restaurants
 
 CREATE TABLE Sells
 (
-    rid INTEGER NOT NULL,
+    rName VARCHAR(50) NOT NULL,
     foodName VARCHAR(50) NOT NULL,
-    PRIMARY KEY (rid, foodName),
-    FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE,
+    PRIMARY KEY (rName, foodName),
+    FOREIGN KEY (rName) REFERENCES Restaurants(rname) ON DELETE CASCADE,
     FOREIGN KEY (foodName) REFERENCES FoodItems
 );
+
+-- Mock Data to test
+insert into FoodItems(foodName, price) values('chicken rice', 4.5);
+insert into FoodItems(foodName, price) values('steak', 10.0);
+insert into FoodItems(foodName, price) values('bubble tea', 2.5);
+insert into FoodItems(foodName, price) values('bak kut teh', 3.5);
+insert into FoodItems(foodName, price) values('prata', 1.5);
+insert into FoodItems(foodName, price) values('nasi lemak', 3.5);
+insert into FoodItems(foodName, price) values('nasi padang', 3.8);
+insert into FoodItems(foodName, price) values('nasi goreng', 4.2);
+insert into FoodItems(foodName, price) values('murtabak', 3.6);
+
+insert into foodcategories values('chinese');
+insert into foodcategories values('western');
+insert into foodcategories values('indian');
+insert into foodcategories values('malay');
+insert into foodcategories values('drinks');
+
+insert into BelongsTo values('chicken rice', 'chinese');
+insert into BelongsTo values('steak', 'western');
+insert into BelongsTo values('bubble tea', 'drinks');
+insert into BelongsTo values('prata', 'indian');
+insert into BelongsTo values('bak kut teh', 'chinese');
+insert into BelongsTo values('nasi padang', 'malay');
+insert into BelongsTo values('nasi goreng', 'malay');
+insert into BelongsTo values('murtabak', 'indian');
+
+insert into Restaurants(rName) values('tian tian');
+insert into Restaurants(rName) values('a1 bakkutteh place');
+insert into Restaurants(rName) values('koi');
+insert into Restaurants(rName) values('ameens');
+insert into Restaurants(rName) values('prata house');
+insert into Restaurants(rName) values('makcik shop');
+insert into Restaurants(rName) values('astons');
+
+insert into Sells values('tian tian', 'chicken rice');
+insert into Sells values('astons', 'steak');
+insert into Sells values('koi', 'bubble tea');
+insert into Sells values('prata house', 'prata');
+insert into Sells values('a1 bakkutteh place', 'bak kut teh');
+insert into Sells values('makcik shop', 'nasi padang');
+insert into Sells values('ameens', 'nasi goreng');
+insert into Sells values('prata house', 'murtabak');
 
 -- Promotion entities
 
