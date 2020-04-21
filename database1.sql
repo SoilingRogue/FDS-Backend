@@ -79,13 +79,13 @@ INSERt INTO DeliveryRiders (uId, deliveryStatus, commision) VALUES
 (0, 1, 1),
 (1, 1, 0.01),
 (2, 1, 9.99),
-(3, 1, 0),
+(3, 0, 0),
 (4, 1, 0),
 (5, 1, 0),
-(6, 1, -3.99), -- test
+(6, 0, -3.99), -- test
 (7, 1, 0),
-(8, 0, -3.99), -- test
-(9, 0, 99999990);
+(8, 1, -3.99), -- test
+(9, 1, 99999990);
 
 -- how to enforce delivery rider belong to either partime XOR fulltime
 INSERT INTO PartTime (uId, weeklyBaseSalary) VALUES
