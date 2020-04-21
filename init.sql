@@ -356,11 +356,12 @@ CREATE TABLE FullTime
 -- Work schedule entities - part time, full time, days & shifts
 
 -- NEED TO RELOOK THRU WORK SCHEDULES -> SLIGHTLY WRONG IMO
+-- update on 21/4: changed form TIME Datatype to int + need to insert more data for monthly schedules
 CREATE TABLE Shifts
 (
     sid INTEGER,
-    startTime TIME(0),
-    endTime TIME(0),
+    startTime int,
+    endTime int,
     PRIMARY KEY (sid)
 );
 
@@ -370,7 +371,7 @@ CREATE TABLE Days
 (
     day INTEGER,
     name VARCHAR(10),
-    PRIMARY KEY (day, name)
+    PRIMARY KEY (day)
 );
 
 CREATE TABLE WWS -- missing MakesUpOf relations
@@ -396,18 +397,18 @@ CREATE TABLE HasShifts
     id INTEGER,
     sid INTEGER NOT NULL,
     day INTEGER,
-    name VARCHAR(10),
     PRIMARY KEY (id),
     FOREIGN KEY (sid) REFERENCES Shifts,
-    FOREIGN KEY (day, name) REFERENCES Days
+    FOREIGN KEY (day) REFERENCES Days
 );
 
+-- Update on 21/4: Uid ref delivery riders instead
 CREATE TABLE HasSchedule
 (
     uId INTEGER,
     id INTEGER,
     PRIMARY KEY (uId, id),
-    FOREIGN KEY (uId) REFERENCES WWS,
+    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (id) REFERENCES HasShifts
 );
 
