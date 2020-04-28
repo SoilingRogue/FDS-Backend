@@ -412,6 +412,33 @@ CREATE TABLE HasSchedule
     FOREIGN KEY (id) REFERENCES HasShifts
 );
 
+-- HOW ABOUT THIS NEW SCHEDULING
+DROP TABLE IF EXISTS NewSchedule
+CASCADE;
+DROP TABLE IF EXISTS NewShift
+CASCADE;
+DROP TABLE IF EXISTS FTShift
+CASCADE;
+DROP TABLE IF EXISTS PTShift
+CASCADE;
+
+-- problem with enforcing that ft riders take the ft shifts and pt riders take pt shifts since rid ref riders
+-- CREATE TABLE NewSchedule
+-- (
+
+-- );
+
+-- CREATE TABLE FTShift(
+--     sId INTEGER,
+--     start1 INTEGER NOT NULL,
+--     end1 INTEGER NOT NULL,
+--     start2 INTEGER NOT NULL,
+--     end2 INTEGER NOT NULL,
+--     PRIMARY KEY (sId),
+--     FOREIGN KEY (sId) REFERENCES NewShift
+-- );
+
+
 -- OLD Version
 
 -- CREATE TABLE Users
