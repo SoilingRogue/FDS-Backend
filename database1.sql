@@ -2,38 +2,38 @@
 
 -- restaurants init
 INSERT INTO Restaurants (rid, rName, minDeliveryCost) VALUES
-(0, MACDONALDS, 9.99),
-(1, KFC, 0.01),
-(2, DTF, 20);
+(0, "MACDONALDS", 9.99),
+(1, "KFC", 0.01),
+(2, "DTF", 20);
 
 -- food categories init
 INSERT INTO FoodCategories (categories) VALUES
-(FastFood),
-(Chinese),
-(Western),
-(ChInEsE); -- check if case sensitive
+("FastFood"),
+("Chinese"),
+("Western"),
+("ChInEsE"); -- check if case sensitive
 
 -- food items - whats the diff btw avail, dailystock & currentstock? + how to enforce dailystock >= currentstock + valid values for all
 INSERT INTO FoodItems (foodName, availability, dailyStock, currentStock, price) VALUES
-(CheeseBurger, 1, 0, 0, 3.99),
-(ZingberBox, 1, 100, 100, 8.99),
-(Dumplings, 0, 10000000000, 1000000000, 3), -- daily stock > 32 bit signed int
-(Baozi, 1, 1, 1, 1);
+("CheeseBurger", 1, 0, 0, 3.99),
+("ZingberBox", 1, 100, 100, 8.99),
+("Dumplings", 0, 10000000000, 1000000000, 3), -- daily stock > 32 bit signed int
+("Baozi", 1, 1, 1, 1);
 
 -- food categories relation init - how to enforce food in at least 1 category?
 INSERT INTO BelongsTo (foodName, categories) VALUES
-(CheeseBurger, FastFood),
-(CheeseBurger, Western), -- food in multiple categories
-(ZingberBox, FastFood),
-(Dumplings, Chinese),
-(Baozi, ChInEsE);
+("CheeseBurger", "FastFood"),
+("CheeseBurger", "Western"), -- food in multiple categories
+("ZingberBox", "FastFood"),
+("Dumplings", "Chinese"),
+("Baozi", "ChInEsE");
 
 -- food rest init - how to enforce food belong to single rest?
 INSERT INTO Sells (rName, foodName) VALUES
-(MACDONALDS, CheeseBurger),
-(KFC, ZingberBox),
-(DTF, Dumplings),
-(DTF, baozi);
+("MACDONALDS", "CheeseBurger"),
+("KFC", "ZingberBox"),
+("DTF", "Dumplings"),
+("DTF", "baozi");
 
 -- not used since promotable is not fully completed
 INSERT INTO Promotions (pid, startDate, endDate) VALUES
@@ -45,22 +45,22 @@ INSERT INTO Promotions (pid, startDate, endDate) VALUES
 
 -- Users
 INSERT INTO Users (uId, email, password) VALUES
-(0, rider0@gmail.com, qwerty),
-(1, rider1@gmail.com, qwerty),
-(2, rider2@gmail.com, qwerty),
-(3, rider3@gmail.com, qwerty),
-(4, rider4@gmail.com, qwerty),
-(5, rider5@gmail.com, qwerty),
-(6, rider6@gmail.com, qwerty),
-(7, rider7@gmail.com, qwerty),
-(8, rider8@gmail.com, qwerty),
-(9, rider9@gmail.com, qwerty),
-(10, cust0@gmail.com, qwerty),
-(11, cust1@gmail.com, qwerty),
-(12, cust2@gmail.com, qwerty),
-(13, cust3@gmail.com, qwerty),
-(14, manager0@gmail.com, qwerty),
-(15, staff@gmail.com, qwerty);
+(0, "rider0@gmail.com", "qwerty"),
+(1, "rider1@gmail.com", "qwerty"),
+(2, "rider2@gmail.com", "qwerty"),
+(3, "rider3@gmail.com", "qwerty"),
+(4, "rider4@gmail.com", "qwerty"),
+(5, "rider5@gmail.com", "qwerty"),
+(6, "rider6@gmail.com", "qwerty"),
+(7, "rider7@gmail.com", "qwerty"),
+(8, "rider8@gmail.com", "qwerty"),
+(9, "rider9@gmail.com", "qwerty"),
+(10, "cust0@gmail.com", "qwerty"),
+(11, "cust1@gmail.com", "qwerty"),
+(12, "cust2@gmail.com", "qwerty"),
+(13, "cust3@gmail.com", "qwerty"),
+(14, "manager0@gmail.com", "qwerty"),
+(15, "staff@gmail.com", "qwerty");
 
 INSERT INTO Managers (uId) VALUES
 (14);
@@ -69,10 +69,10 @@ INSERT INTO RestaurantStaff (uId) VALUES
 (15);
 
 INSERT INTO Customers (uId, rewardPoints, creditCard) VALUES
-(10, 1000000, fsfsfsfsffffffff),
-(11, 0, fsfsfsfsffffffff), -- same credit card number as prev customer - valid?
-(12, 1, fsfsfsfsfffffffs),
-(13, 0, fsfsfsfsffffsfff);
+(10, 1000000, "fsfsfsfsffffffff"),
+(11, 0, "fsfsfsfsffffffff"), -- same credit card number as prev customer - valid?
+(12, 1, "fsfsfsfsfffffffs"),
+(13, 0, "fsfsfsfsffffsfff");
 
 -- init riders & respective schedules
 INSERt INTO DeliveryRiders (uId, deliveryStatus, commision) VALUES
@@ -103,13 +103,13 @@ INSERT INTO FullTime (uId, monthlyBaseSalary) VALUES
 (9, 1);
 
 INSERT INTO DAYS (day, name) VALUES
-(1, MONDAY),
-(2, TUESDAY),
-(3, WEDNESDAY),
-(4, THURSDAY),
-(5, FRIDAY),
-(6, SATURDAY),
-(7, SUNDAY);
+(1, "MONDAY"),
+(2, "TUESDAY"),
+(3, "WEDNESDAY"),
+(4, "THURSDAY"),
+(5, "FRIDAY"),
+(6, "SATURDAY"),
+(7, "SUNDAY");
 
 -- can add more data for part time shifts, all full time shifts are added alr
 INSERT INTO Shifts (sid, startTime, endTime) VALUES
