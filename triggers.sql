@@ -9,6 +9,7 @@ BEGIN
 -- look through all 
     IF FOUND THEN
         RAISE exception;
+        ROLLBACK TRANSACTION;
     END IF;
     RETURN NULL;
 END;
