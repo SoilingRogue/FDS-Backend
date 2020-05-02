@@ -241,8 +241,8 @@ CREATE TABLE Applies -- links both res & fds promos to order
 CREATE TABLE Users
 (
     uId SERIAL,
-    email VARCHAR(50) UNIQUE,
-    password VARCHAR(50),
+    email VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
     PRIMARY KEY (uId)
 );
 
@@ -263,8 +263,8 @@ CREATE TABLE RestaurantStaff
 CREATE TABLE Customers
 (
     uId INTEGER,
-    rewardPoints INTEGER DEFAULT 0,
-    creditCard CHAR(16),
+    rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
+    creditCard CHAR(16) NOT NULL,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
@@ -272,8 +272,8 @@ CREATE TABLE Customers
 CREATE TABLE DeliveryRiders
 (
     uId INTEGER,
-    deliveryStatus BIT,
-    commision FLOAT DEFAULT 0.0,
+    deliveryStatus BIT DEFAULT 0,
+    commission FLOAT DEFAULT 0.0,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
