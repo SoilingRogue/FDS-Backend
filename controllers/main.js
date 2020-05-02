@@ -1,5 +1,56 @@
-const addUser = (req, res, db) => {
-    const { email, userType, password } = req.body
+const addCustomer = (req, res, db) => {
+    const { email, password } = req.body
+    db.query(
+        `select addCustomer('${email}','${password}')`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json(results.rows[0]['addcustomer'])
+        })
+}
+const addDeliveryRider = (req, res, db) => {
+    const { email, password } = req.body
+    db.query(
+        `select addDeliveryRider('${email}','${password}')`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json(results.rows[0]['adddeliveryrider'])
+        })
+}
+const addRestaurantStaff = (req, res, db) => {
+    const { email, password } = req.body
+    db.query(
+        `select addRestaurantStaff('${email}','${password}')`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json(results.rows[0]['addrestaurantstaff'])
+        })
+}
+const addFdsManager = (req, res, db) => {
+    const { email, password } = req.body
+    db.query(
+        `select addFdsManager('${email}','${password}')`,
+        (error, results) => {
+            if (error) {
+                console.log(error)
+                res.status(400).json({ dbError: `DB error: ${error}` })
+                return
+            }
+            res.status(200).json(results.rows[0]['addfdsmanager'])
+        })
+}
+    /*
     db.query(
         `with ins as (
             insert into Users(email, password) 
@@ -17,7 +68,7 @@ const addUser = (req, res, db) => {
             }
             res.status(200).json(results.rows[0])
         })
-}
+    */  
 
 const validateEmail = (req, res, db) => {
     console.log(req)
@@ -111,7 +162,10 @@ const deleteUser = (req, res, db) => {
 }
 
 module.exports = {
-    addUser,
+    addCustomer,
+    addDeliveryRider,
+    addRestaurantStaff,
+    addFdsManager,
     validateEmail,
     validatePassword,
     changePassword,

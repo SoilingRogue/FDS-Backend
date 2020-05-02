@@ -48,7 +48,11 @@ app.use(bodyParser.json())
 app.use(morgan('combined')) // use 'tiny' or 'combined'
 
 // App Routes
-app.post('/add_user', (req, res) => main.addUser(req, res, db))
+app.post('/add_customer', (req, res) => main.addCustomer(req, res, db))
+app.post('/add_delivery_rider', (req, res) => main.addDeliveryRider(req, res, db))
+app.post('/add_restaurant_staff', (req, res) => main.addRestaurantStaff(req, res, db))
+app.post('/add_fds_manager', (req, res) => main.addFdsManager(req, res, db))
+
 app.post('/validate_email', (req, res) => main.validateEmail(req, res, db))
 app.post('/validate_password', (req, res) => main.validatePassword(req, res, db))
 app.post('/change_password', (req, res) => main.changePassword(req, res, db))

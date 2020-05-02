@@ -264,7 +264,7 @@ CREATE TABLE Customers
 (
     uId INTEGER,
     rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
-    creditCard CHAR(16) NOT NULL,
+    creditCard CHAR(16) DEFAULT NULL,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
 );
@@ -272,7 +272,7 @@ CREATE TABLE Customers
 CREATE TABLE DeliveryRiders
 (
     uId INTEGER,
-    deliveryStatus BIT DEFAULT 0,
+    deliveryStatus BIT DEFAULT 0::BIT,
     commission FLOAT DEFAULT 0.0,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
