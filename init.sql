@@ -12,7 +12,15 @@ DROP TABLE IF EXISTS Promotions
 CASCADE;
 DROP TABLE IF EXISTS RestaurantPromotions
 CASCADE;
+DROP TABLE IF EXISTS PriceTimeItemPromotions
+CASCADE;
+DROP TABLE IF EXISTS PriceTimeOrderPromotions
+CASCADE;
 DROP TABLE IF EXISTS FDSPromotions
+CASCADE;
+DROP TABLE IF EXISTS FirstOrderPromotions
+CASCADE;
+DROP TABLE IF EXISTS DeliveryPromotions
 CASCADE;
 DROP TABLE IF EXISTS HasPromotions
 CASCADE;
@@ -44,23 +52,21 @@ DROP TABLE IF EXISTS Reviews
 CASCADE;
 DROP TABLE IF EXISTS Rates
 CASCADE;
-DROP TABLE IF EXISTS LocationHistories
-CASCADE;
 DROP TABLE IF EXISTS PartTime
 CASCADE;
 DROP TABLE IF EXISTS FullTime
 CASCADE;
-DROP TABLE IF EXISTS Shifts
+DROP TABLE IF EXISTS PTShift
 CASCADE;
-DROP TABLE IF EXISTS Days
+DROP TABLE IF EXISTS FTShift
 CASCADE;
 DROP TABLE IF EXISTS WWS
 CASCADE;
 DROP TABLE IF EXISTS MWS
 CASCADE;
-DROP TABLE IF EXISTS HasShifts
+DROP TABLE IF EXISTS FullTimeScheduling
 CASCADE;
-DROP TABLE IF EXISTS HasSchedule
+DROP TABLE IF EXISTS DayCombinations
 CASCADE;
 
 -- NEW VERSION --
@@ -119,75 +125,67 @@ CREATE TABLE Sells
     FOREIGN KEY (foodName) REFERENCES FoodItems
 );
 
--- Mock Data to test
-insert into FoodItems(foodName, price) values('chicken rice', 4.5);
-insert into FoodItems(foodName, price) values('steak', 10.0);
-insert into FoodItems(foodName, price) values('bubble tea', 2.5);
-insert into FoodItems(foodName, price) values('bak kut teh', 3.5);
-insert into FoodItems(foodName, price) values('prata', 1.5);
-insert into FoodItems(foodName, price) values('nasi lemak', 3.5);
-insert into FoodItems(foodName, price) values('nasi padang', 3.8);
-insert into FoodItems(foodName, price) values('nasi goreng', 4.2);
-insert into FoodItems(foodName, price) values('murtabak', 3.6);
-
-insert into foodcategories values('chinese');
-insert into foodcategories values('western');
-insert into foodcategories values('indian');
-insert into foodcategories values('malay');
-insert into foodcategories values('drinks');
-
-insert into BelongsTo values('chicken rice', 'chinese');
-insert into BelongsTo values('steak', 'western');
-insert into BelongsTo values('bubble tea', 'drinks');
-insert into BelongsTo values('prata', 'indian');
-insert into BelongsTo values('bak kut teh', 'chinese');
-insert into BelongsTo values('nasi padang', 'malay');
-insert into BelongsTo values('nasi goreng', 'malay');
-insert into BelongsTo values('murtabak', 'indian');
-
-insert into Restaurants(rName) values('tian tian');
-insert into Restaurants(rName) values('a1 bakkutteh place');
-insert into Restaurants(rName) values('koi');
-insert into Restaurants(rName) values('ameens');
-insert into Restaurants(rName) values('prata house');
-insert into Restaurants(rName) values('makcik shop');
-insert into Restaurants(rName) values('astons');
-
-insert into Sells values('tian tian', 'chicken rice');
-insert into Sells values('astons', 'steak');
-insert into Sells values('koi', 'bubble tea');
-insert into Sells values('prata house', 'prata');
-insert into Sells values('a1 bakkutteh place', 'bak kut teh');
-insert into Sells values('makcik shop', 'nasi padang');
-insert into Sells values('ameens', 'nasi goreng');
-insert into Sells values('prata house', 'murtabak');
-
 -- Promotion entities
 
 CREATE TABLE Promotions
 (
     pid INTEGER,
-    startDate DATE,
-    endDate DATE,
     PRIMARY KEY (pid)
 );
 
 CREATE TABLE RestaurantPromotions
 (
     pid INTEGER,
-    amount FLOAT,
-    -- missing condition -> boolean or what??
-    type INTEGER,
+    startDate DATE,
+    endDate DATE,
     PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
+);
+
+CREATE TABLE PriceTimeOrderPromotions
+(
+    pid INTEGER,
+    discountPercentage FLOAT,
+    baseAmount FLOAT,
+    PRIMARY KEY (pid),
+    FOREIGN KEY (pid) REFERENCES RestaurantPromotions
+);
+
+CREATE TABLE PriceTimeItemPromotions
+(
+    pid INTEGER,
+    discountPercentage FLOAT,
+    baseAmount FLOAT,
+    item INTEGER,
+    PRIMARY KEY (pid, item),
+    FOREIGN KEY (pid) REFERENCES RestaurantPromotions,
+    FOREIGN KEY (item) REFERENCES FoodItems
 );
 
 CREATE TABLE FDSPromotions
 (
     pid INTEGER,
-    type INTEGER,
     PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES Promotions
+);
+
+CREATE TABLE FirstOrderPromotions
+(
+    pid INTEGER,
+    discountPercentage FLOAT,
+    PRIMARY KEY (pid),
+    FOREIGN KEY (pid) REFERENCES FDSPromotions
+);
+
+CREATE TABLE DeliveryPromotions
+(
+    pid INTEGER,
+    startDate DATE,
+    endDate DATE,
+    discountPercentage FLOAT,
+    baseAmount FLOAT,
+    PRIMARY KEY (pid),
+    FOREIGN KEY (pid) REFERENCES FDSPromotions
 );
 
 -- Restaurant-Promotion relations
@@ -256,13 +254,16 @@ CREATE TABLE Managers
 CREATE TABLE RestaurantStaff
 (
     uId INTEGER,
+    rId INTEGER,
     PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
+    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE,
+    FOREIGN KEY (uId) REFERENCES Restaurants ON DELETE CASCADE
 );
 
 CREATE TABLE Customers
 (
     uId INTEGER,
+    timestamp TIMESTAMP,
     rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
     creditCard CHAR(16) DEFAULT NULL,
     PRIMARY KEY (uId),
@@ -322,19 +323,6 @@ CREATE TABLE Rates -- can consider having delivery id for delivers entity and us
     FOREIGN KEY (oid) REFERENCES Delivers
 );
 
--- Location entities
-
-CREATE TABLE LocationHistories
-(
-    uId INTEGER NOT NULL,
-    oid INTEGER NOT NULL,
-    location VARCHAR(50),
-    orderTime TIMESTAMP,
-    PRIMARY KEY (oid),
-    FOREIGN KEY (uId) REFERENCES Customers,
-    FOREIGN KEY (oid) REFERENCES Orders
-);
-
 -- DeliveryRiders entities - part time & full time
 
 CREATE TABLE PartTime
@@ -354,7 +342,8 @@ CREATE TABLE FullTime
 );
 
 -- Work schedule entities - part time, full time, days & shifts
--- PTShift, WWS slightly diff from er diagram
+-- Need to look thru MWS and WWS
+
 CREATE TABLE PTShift
 (
     day INTEGER,
@@ -374,7 +363,6 @@ CREATE TABLE FTShift
     end2 INTEGER NOT NULL,
     PRIMARY KEY (sId)
 );
-
 
 CREATE TABLE WWS
 (
@@ -396,165 +384,23 @@ CREATE TABLE MWS
     FOREIGN KEY (uId) REFERENCES FullTime
 );
 
-
-
--- NEED TO RELOOK THRU WORK SCHEDULES -> SLIGHTLY WRONG IMO
--- update on 21/4: changed form TIME Datatype to int + need to insert more data for monthly schedules
-CREATE TABLE Shifts
+-- remember to update this table when fttimescheduling is edited or vice versa
+CREATE TABLE DayCombinations
 (
-    sid INTEGER,
-    startTime int,
-    endTime int,
-    PRIMARY KEY (sid)
-);
-
--- idk if needed - > see HasShifts relations in Work schedule relations
--- RMB to delete all references if not needed
-CREATE TABLE Days
-(
-    day INTEGER,
-    name VARCHAR(10),
-    PRIMARY KEY (day)
-);
-
-CREATE TABLE WWS -- missing MakesUpOf relations
-(
-    uId INTEGER,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES PartTime
-);
-
-CREATE TABLE MWS -- missing MakesUpOf relations
-(
+    startDay INTEGER,
+    endDay INTEGER,
     uId INTEGER,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES FullTime
 );
 
--- Work schedule relations
-
--- Remember to delete day foreign key ref if days not needed
--- extra id present to link relation btw WWS & hasShifts
-CREATE TABLE HasShifts
-(
-    id INTEGER,
-    sid INTEGER NOT NULL,
-    day INTEGER,
-    PRIMARY KEY (id),
-    FOREIGN KEY (sid) REFERENCES Shifts,
-    FOREIGN KEY (day) REFERENCES Days
-);
-
--- Update on 21/4: Uid ref delivery riders instead
-CREATE TABLE HasSchedule
+-- remember to update this table when daycombinations is edited or vice versa
+CREATE TABLE FullTimeScheduling
 (
     uId INTEGER,
-    id INTEGER,
-    PRIMARY KEY (uId, id),
-    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
-    FOREIGN KEY (id) REFERENCES HasShifts
+    day INTEGER,
+    shift INTEGER,
+    PRIMARY KEY (uId, day, shift),
+    FOREIGN KEY (uId) REFERENCES FullTime,
+    FOREIGN KEY (shift) REFERENCES FTShift
 );
-
--- OLD Version
-
--- CREATE TABLE Users
--- (
---     email VARCHAR(50),
---     password VARCHAR(50),
---     PRIMARY KEY (email)
--- );
-
--- CREATE TABLE RestaurantStaffs
--- (
---     rEmail VARCHAR(50),
---     PRIMARY KEY (rEmail),
---     FOREIGN KEY (rEmail) REFERENCES Users
--- );
-
--- CREATE TABLE Managers
--- (
---     mEmail VARCHAR(50),
---     PRIMARY KEY (mEmail),
---     FOREIGN KEY (mEmail) REFERENCES Users
--- );
-
--- CREATE TABLE Customers
--- (
---     cEmail INTEGER,
---     reward INTEGER,
---     creditCard INTEGER,
---     --Credit card has to have certain length
---     lastOrder INTEGER,
---     PRIMARY KEY (cEmail),
---     FOREIGN KEY (cEmail) REFERENCES Users,
---     FOREIGN KEY (lastOrder) REFERENCES OrderArchive
--- );
-
--- CREATE TABLE DeliveryRiders
--- (
---     --WIP
---     dEmail VARCHAR(50),
---     salary FLOAT,
---     deliveryStatus VARCHAR(20),
---     numDelivered INTEGER,
---     PRIMARY KEY (dEmail),
---     FOREIGN KEY (dEmail) REFERENCES Users
--- );
-
--- CREATE TABLE Food
--- (
---     fName VARCHAR(50),
---     type VARCHAR(20),
---     PRIMARY KEY (fName)
--- );
-
--- CREATE TABLE Restaurants
--- (
---     rid INTEGER,
---     name VARCHAR(50),
---     minDeliveryCost FLOAT,
---     PRIMARY KEY (rid)
--- );
-
--- -- yeotong says kiv
--- CREATE TABLE Sells
--- (
---     rid INTEGER NOT NULL,
---     fName VARCHAR(50) NOT NULL,
---     PRIMARY KEY (rid, fid),
---     FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE,
---     FOREIGN KEY (fName) REFERENCES Food
--- );
-
--- CREATE TABLE Orders -- WIP
--- (
---     oid INTEGER NOT NULL,
---     PRIMARY KEY (oid, rid, cEmail, dEmail, orderDate)
--- );
-
--- CREATE TABLE OrderArchive --WIP
--- (
---     oid INTEGER,
---     rid INTEGER NOT NULL,
---     cEmail VARCHAR(50) NOT NULL,
---     dEmail VARCHAR(50) NOT NULL,
---     totalCost FLOAT,
---     location VARCHAR(50),
---     paymentType VARCHAR(20),
---     orderDate DATE,
---     PRIMARY KEY (oid),
---     FOREIGN KEY (rid) REFERENCES Restaurants,
---     FOREIGN KEY (cEmail) REFERENCES Customers,
---     FOREIGN KEY (dEmail) REFERENCES DeliveryRiders
--- );
-
--- CREATE TABLE Promotions
--- (
---     -- WIP
---     pid INTEGER NOT NULL,
---     startDate DATE,
---     endDate DATE,
---     description VARCHAR(50),
---     discountAmt FLOAT,
---     PRIMARY KEY (pid)
--- );
