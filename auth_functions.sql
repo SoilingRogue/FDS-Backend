@@ -1,6 +1,6 @@
 -- Sequence for uid
-DROP SEQUENCE IF EXISTS uidSequence;
-CREATE SEQUENCE uidSequence START 1;
+-- DROP SEQUENCE IF EXISTS uidSequence;
+-- CREATE SEQUENCE uidSequence START 1;
 
 ------------------------- Adding User Functionalities -----------------------------
 /*
@@ -12,17 +12,16 @@ CREATE SEQUENCE uidSequence START 1;
 * addFdsManager():
 */
 
-
 -- Add User
 DROP FUNCTION IF EXISTS addUser;
-CREATE FUNCTION addUser(newUid integer, 
- newEmail VARCHAR(50), newPassword VARCHAR(50))
- RETURNS void
+CREATE FUNCTION addUser(newEmail VARCHAR(50), newPassword VARCHAR(50))
+ RETURNS setof integer
 AS $$
 BEGIN
 
- INSERT INTO Users (uId, email, password) VALUES 
- (newUid, newEmail, newPassword);
+ RETURN QUERY INSERT INTO Users (email, password) VALUES 
+ (newEmail, newPassword)
+ RETURNING uid;
 
 END;
 $$ LANGUAGE 'plpgsql';
@@ -36,10 +35,10 @@ CREATE FUNCTION addCustomer(newEmail VARCHAR(50),
  RETURNS SETOF json AS
 $$
 DECLARE 
-newUid integer := nextval('uidSequence');
+newUid integer;
 BEGIN
  
- PERFORM addUser(newUid, newEmail, newPassword);
+ SELECT addUser(newEmail, newPassword) into newUid;
 
  RETURN QUERY INSERT INTO Customers (uId, rewardPoints, creditCard) 
  VALUES (newUid, DEFAULT, DEFAULT)
@@ -57,10 +56,10 @@ CREATE FUNCTION addDeliveryRider(newEmail VARCHAR(50),
     RETURNS SETOF json AS 
 $$
 DECLARE 
-newUid integer := nextval('uidSequence');
+newUid integer;
 BEGIN
 	
-	PERFORM addUser(newUid, newEmail, newPassword);
+    SELECT addUser(newEmail, newPassword) into newUid;
 
     RETURN QUERY INSERT INTO DeliveryRiders (uId, deliveryStatus, commission) 
 	VALUES (newUid, DEFAULT, DEFAULT)
@@ -77,10 +76,10 @@ CREATE FUNCTION addRestaurantStaff(newEmail VARCHAR(50),
     RETURNS SETOF json AS 
 $$
 DECLARE 
-newUid integer := nextval('uidSequence');
+newUid integer;
 BEGIN
-	
-	PERFORM addUser(newUid, newEmail, newPassword);
+
+    SELECT addUser(newEmail, newPassword) into newUid;
 
     RETURN QUERY INSERT INTO RestaurantStaff (uId) 
 	    VALUES (newUid)
@@ -97,10 +96,10 @@ CREATE FUNCTION addFdsManager(newEmail VARCHAR(50),
 RETURNS SETOF json AS 
 $$
 DECLARE 
-newUid integer := nextval('uidSequence');
+newUid integer;
 BEGIN
 	
-	PERFORM addUser(newUid, newEmail, newPassword);
+    SELECT addUser(newEmail, newPassword) into newUid;
 
     RETURN QUERY 
     INSERT INTO Managers (uId) 
