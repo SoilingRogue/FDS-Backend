@@ -295,7 +295,7 @@ CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
 (
     uId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (uId, oid),
+    PRIMARY KEY (oid),
     FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
@@ -316,23 +316,23 @@ CREATE TABLE Rates -- can consider having delivery id for delivers entity and us
 (
     uId INTEGER,
     oid INTEGER,
-    rid INTEGER,
     rating INTEGER,
     PRIMARY KEY (uId, oid),
     FOREIGN KEY (uId) REFERENCES Customers,
-    FOREIGN KEY (rid, oid) REFERENCES Delivers
+    FOREIGN KEY (oid) REFERENCES Delivers
 );
 
 -- Location entities
 
 CREATE TABLE LocationHistories
 (
-    uId INTEGER,
-    address1 VARCHAR(50),
-    address2 VARCHAR(50),
-    address3 VARCHAR(50),
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Customers
+    uId INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
+    location VARCHAR(50),
+    orderTime TIMESTAMP,
+    PRIMARY KEY (oid),
+    FOREIGN KEY (uId) REFERENCES Customers,
+    FOREIGN KEY (oid) REFERENCES Orders
 );
 
 -- DeliveryRiders entities - part time & full time
