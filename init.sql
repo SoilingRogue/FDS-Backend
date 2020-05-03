@@ -354,6 +354,49 @@ CREATE TABLE FullTime
 );
 
 -- Work schedule entities - part time, full time, days & shifts
+-- PTShift, WWS slightly diff from er diagram
+CREATE TABLE PTShift
+(
+    day INTEGER,
+    startTime INTEGER,
+    endTime INTEGER,
+    uId INTEGER,
+    PRIMARY KEY (day, startTime, endTime, uId),
+    FOREIGN KEY (uId) REFERENCES PartTime
+);
+
+CREATE TABLE FTShift
+(
+    sId INTEGER,
+    start1 INTEGER NOT NULL,
+    end1 INTEGER NOT NULL,
+    start2 INTEGER NOT NULL,
+    end2 INTEGER NOT NULL,
+    PRIMARY KEY (sId)
+);
+
+
+CREATE TABLE WWS
+(
+    uId INTEGER,
+    totalHours INTEGER,
+    week INTEGER,
+    PRIMARY KEY (uId, week),
+    FOREIGN KEY (uId) REFERENCES PartTime
+);
+
+CREATE TABLE MWS
+(
+    uId INTEGER,
+    month INTEGER,
+    totalHours INTEGER,
+    startDay INTEGER,
+    endDay INTEGER,
+    PRIMARY KEY (uId, month),
+    FOREIGN KEY (uId) REFERENCES FullTime
+);
+
+
 
 -- NEED TO RELOOK THRU WORK SCHEDULES -> SLIGHTLY WRONG IMO
 -- update on 21/4: changed form TIME Datatype to int + need to insert more data for monthly schedules
@@ -411,33 +454,6 @@ CREATE TABLE HasSchedule
     FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (id) REFERENCES HasShifts
 );
-
--- HOW ABOUT THIS NEW SCHEDULING
-DROP TABLE IF EXISTS NewSchedule
-CASCADE;
-DROP TABLE IF EXISTS NewShift
-CASCADE;
-DROP TABLE IF EXISTS FTShift
-CASCADE;
-DROP TABLE IF EXISTS PTShift
-CASCADE;
-
--- problem with enforcing that ft riders take the ft shifts and pt riders take pt shifts since rid ref riders
--- CREATE TABLE NewSchedule
--- (
-
--- );
-
--- CREATE TABLE FTShift(
---     sId INTEGER,
---     start1 INTEGER NOT NULL,
---     end1 INTEGER NOT NULL,
---     start2 INTEGER NOT NULL,
---     end2 INTEGER NOT NULL,
---     PRIMARY KEY (sId),
---     FOREIGN KEY (sId) REFERENCES NewShift
--- );
-
 
 -- OLD Version
 
