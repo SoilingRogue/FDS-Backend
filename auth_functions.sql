@@ -1,7 +1,3 @@
--- Sequence for uid
--- DROP SEQUENCE IF EXISTS uidSequence;
--- CREATE SEQUENCE uidSequence START 1;
-
 ------------------------- Adding User Functionalities -----------------------------
 /*
 * Functions:
@@ -72,7 +68,7 @@ $$ LANGUAGE 'plpgsql';
 -- Tag to a form that creates a RestaurantStaff
 DROP FUNCTION IF EXISTS addRestaurantStaff;
 CREATE FUNCTION addRestaurantStaff(newEmail VARCHAR(50), 
-	newPassword VARCHAR(50))
+	newPassword VARCHAR(50), rid INTEGER)
     RETURNS SETOF json AS 
 $$
 DECLARE 
@@ -81,8 +77,8 @@ BEGIN
 
     SELECT addUser(newEmail, newPassword) into newUid;
 
-    RETURN QUERY INSERT INTO RestaurantStaff (uId) 
-	    VALUES (newUid)
+    RETURN QUERY INSERT INTO RestaurantStaff (uId, rid) 
+	    VALUES (newUid, rid)
         RETURNING json_build_object('uid', uid);
         
 END;

@@ -80,7 +80,7 @@ CASCADE;
 CREATE TABLE FoodItems
 (
     foodName VARCHAR(50),
-    availability BIT,
+    availability INTEGER,
     dailyStock INTEGER,
     currentStock INTEGER,
     price FLOAT,
@@ -156,7 +156,7 @@ CREATE TABLE PriceTimeItemPromotions
     pid INTEGER,
     discountPercentage FLOAT,
     baseAmount FLOAT,
-    item INTEGER,
+    item VARCHAR(50),
     PRIMARY KEY (pid, item),
     FOREIGN KEY (pid) REFERENCES RestaurantPromotions,
     FOREIGN KEY (item) REFERENCES FoodItems
@@ -257,13 +257,13 @@ CREATE TABLE RestaurantStaff
     rId INTEGER,
     PRIMARY KEY (uId),
     FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE,
-    FOREIGN KEY (uId) REFERENCES Restaurants ON DELETE CASCADE
+    FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE
 );
 
 CREATE TABLE Customers
 (
     uId INTEGER,
-    timestamp TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
     creditCard CHAR(16) DEFAULT NULL,
     PRIMARY KEY (uId),

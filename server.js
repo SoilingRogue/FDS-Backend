@@ -47,7 +47,7 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(morgan('combined')) // use 'tiny' or 'combined'
 
-// App Routes
+// auth routes
 app.post('/add_customer', (req, res) => main.addCustomer(req, res, db))
 app.post('/add_delivery_rider', (req, res) => main.addDeliveryRider(req, res, db))
 app.post('/add_restaurant_staff', (req, res) => main.addRestaurantStaff(req, res, db))

@@ -25,9 +25,9 @@ const addDeliveryRider = (req, res, db) => {
         })
 }
 const addRestaurantStaff = (req, res, db) => {
-    const { email, password } = req.body
+    const { email, password, restaurantName } = req.body
     db.query(
-        `select addRestaurantStaff('${email}','${password}')`,
+        `select addRestaurantStaff('${email}','${password}', '${restaurantName}')`,
         (error, results) => {
             if (error) {
                 console.log(error)
