@@ -79,12 +79,14 @@ CASCADE;
 
 CREATE TABLE FoodItems
 (
+    rid INTEGER,
     foodName VARCHAR(50),
     availability INTEGER,
     dailyStock INTEGER,
     currentStock INTEGER,
     price FLOAT,
-    PRIMARY KEY (foodName)
+    PRIMARY KEY (rid, foodName),
+    FOREIGN KEY (rid) REFERENCES Restaurants
 );
 
 CREATE TABLE FoodCategories
@@ -208,6 +210,7 @@ CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will
     deliveryCost FLOAT NOT NULL,
     totalCost FLOAT NOT NULL,
     pointsUsed INTEGER,
+    order_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (oid)
 );
 
