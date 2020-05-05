@@ -87,7 +87,6 @@ const validatePassword = (req, res, db) => {
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            console.log(results)
             if (results.rowCount > 0)
                 res.status(200).json(results.rows[0])
             else

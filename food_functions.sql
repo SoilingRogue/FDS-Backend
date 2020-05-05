@@ -12,7 +12,7 @@ AS $$
 BEGIN
  
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
-    SELECT F1.foodName, R1.rName, F1.price, F1.availability, F1.currentStock
+    SELECT F1.foodName, R1.rName, R1.rid, F1.price, F1.availability, F1.currentStock
     FROM FoodItems F1 join Restaurants R1 USING (rid)
     ) t;
 

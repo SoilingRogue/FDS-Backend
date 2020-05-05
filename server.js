@@ -60,9 +60,10 @@ app.post('/change_password', (req, res) => main.changePassword(req, res, db))
 app.post('/change_credit_card', (req, res) => main.changeCreditCard(req, res, db))
 app.post('/delete_user', (req, res) => main.deleteUser(req, res, db))
 
+app.post('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
+
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
 
-app.get('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

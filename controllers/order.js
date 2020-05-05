@@ -8,10 +8,10 @@ const checkValidOrder = (req, res, db) => {
             `select getRestaurantMinCost(${currentOrder[0].rid})`,
             (error, results) => {
                 if (error) {
-                    res.status(400).json({ dbError: `DB error: ${error}` })
+                    res.status(400).json({ error: `DB error: ${error}` })
                 }
-                if (results.rows[0]['getrestaurantmincost'] < totalCost)
-                    res.status(400).json({ error: 'Does not meet restaurant\'s minimum cost'})
+                else if (results.rows[0]['getrestaurantmincost'] < totalCost)
+                    res.status(400).json({ error: 'Does not meet minimum order cost'})
                 else
                     res.status(200).end()
             })
