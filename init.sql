@@ -201,8 +201,12 @@ CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will
     deliveryCost FLOAT NOT NULL,
     totalCost FLOAT NOT NULL,
     pointsUsed INTEGER,
+<<<<<<< Updated upstream
     order_at TIMESTAMP NOT NULL DEFAULT NOW(),
     deliveryLocation TEXT,
+=======
+    ordered_at TIMESTAMP NOT NULL DEFAULT NOW(),
+>>>>>>> Stashed changes
     PRIMARY KEY (oid)
 );
 
