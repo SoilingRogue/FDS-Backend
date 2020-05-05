@@ -6,8 +6,6 @@ DROP TABLE IF EXISTS BelongsTo
 CASCADE;
 DROP TABLE IF EXISTS Restaurants
 CASCADE;
-DROP TABLE IF EXISTS Sells
-CASCADE;
 DROP TABLE IF EXISTS Promotions
 CASCADE;
 DROP TABLE IF EXISTS RestaurantPromotions
@@ -75,6 +73,18 @@ CASCADE;
 -- Add missing attributes!!!
 -- Decide which relation requires on DELETE CASCADE/ NOT NULL etc.
 
+
+
+-- Restaurant entities
+
+CREATE TABLE Restaurants
+(
+    rid SERIAL,
+    rName VARCHAR(50),
+    minOrderCost FLOAT,
+    PRIMARY KEY (rid)
+);
+
 -- Food entities
 
 CREATE TABLE FoodItems
@@ -99,32 +109,12 @@ CREATE TABLE FoodCategories
 
 CREATE TABLE BelongsTo
 (
+    rid INTEGER NOT NULL,
     foodName VARCHAR(50) NOT NULL,
     categories VARCHAR(50) NOT NULL,
-    PRIMARY KEY (foodName, categories),
-    FOREIGN KEY (foodName) REFERENCES FoodItems,
+    PRIMARY KEY (rid, foodName, categories),
+    FOREIGN KEY (rid, foodName) REFERENCES FoodItems,
     FOREIGN KEY (categories) REFERENCES FoodCategories
-);
-
--- Restaurant entities
-
-CREATE TABLE Restaurants
-(
-    rid SERIAL,
-    rName VARCHAR(50) UNIQUE,
-    minDeliveryCost FLOAT,
-    PRIMARY KEY (rid)
-);
-
--- Restaurant-Food relations
-
-CREATE TABLE Sells
-(
-    rName VARCHAR(50) NOT NULL,
-    foodName VARCHAR(50) NOT NULL,
-    PRIMARY KEY (rName, foodName),
-    FOREIGN KEY (rName) REFERENCES Restaurants(rname) ON DELETE CASCADE,
-    FOREIGN KEY (foodName) REFERENCES FoodItems
 );
 
 -- Promotion entities
@@ -158,10 +148,11 @@ CREATE TABLE PriceTimeItemPromotions
     pid INTEGER,
     discountPercentage FLOAT,
     baseAmount FLOAT,
+    rid INTEGER,
     item VARCHAR(50),
     PRIMARY KEY (pid, item),
     FOREIGN KEY (pid) REFERENCES RestaurantPromotions,
-    FOREIGN KEY (item) REFERENCES FoodItems
+    FOREIGN KEY (rid, item) REFERENCES FoodItems
 );
 
 CREATE TABLE FDSPromotions
@@ -205,12 +196,13 @@ CREATE TABLE HasPromotions
 
 CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will link both entities tgt
 (
-    oid INTEGER,
+    oid SERIAL,
     foodCost FLOAT NOT NULL,
     deliveryCost FLOAT NOT NULL,
     totalCost FLOAT NOT NULL,
     pointsUsed INTEGER,
     order_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deliveryLocation TEXT,
     PRIMARY KEY (oid)
 );
 
@@ -220,10 +212,11 @@ CREATE TABLE ConsistsOf
 (
     oid INTEGER NOT NULL,
     foodName VARCHAR(50) NOT NULL,
+    rid INTEGER,
     quantity INTEGER,
     PRIMARY KEY (oid, foodName),
     FOREIGN KEY (oid) REFERENCES Orders,
-    FOREIGN KEY (foodName) REFERENCES FoodItems
+    FOREIGN KEY (rid, foodName) REFERENCES FoodItems
 );
 
 -- Order-Promotion relations

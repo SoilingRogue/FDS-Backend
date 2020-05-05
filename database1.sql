@@ -1,13 +1,21 @@
 -- Mock Data to test
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('chicken rice', 1, 100, 2, 4.5);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('steak', 1, 100, 55, 10.0);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('bubble tea', 0, 100, 0, 2.5);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('bak kut teh', 1, 40, 40, 3.5);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('prata', 1, 40, 20, 1.5);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('nasi lemak', 0, 40, 0, 3.5);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('nasi padang', 0, 50, 0, 3.8);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('nasi goreng', 1, 40, 40, 4.2);
-insert into FoodItems(foodName, availability, dailyStock, currentStock, price) values('murtabak', 1, 30, 30, 3.6);
+insert into Restaurants(rName, minOrderCost) values('tian tian', 7);
+insert into Restaurants(rName, minOrderCost) values('a1 bakkutteh place', 20);
+insert into Restaurants(rName, minOrderCost) values('koi', 5);
+insert into Restaurants(rName, minOrderCost) values('ameens', 15);
+insert into Restaurants(rName, minOrderCost) values('prata house', 10);
+insert into Restaurants(rName, minOrderCost) values('makcik shop', 5);
+insert into Restaurants(rName, minOrderCost) values('astons', 8);
+
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(1, 'chicken rice', 1, 100, 2, 4.5);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(7, 'steak', 1, 100, 55, 10.0);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(3, 'bubble tea', 0, 100, 0, 2.5);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(2, 'bak kut teh', 1, 40, 40, 3.5);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(5, 'prata', 1, 40, 20, 1.5);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(6, 'nasi lemak', 0, 40, 0, 3.5);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(4, 'nasi padang', 0, 50, 0, 3.8);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(4, 'nasi goreng', 1, 40, 40, 4.2);
+insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(5, 'murtabak', 1, 30, 30, 3.6);
 
 insert into FoodCategories values('chinese');
 insert into FoodCategories values('western');
@@ -15,33 +23,22 @@ insert into FoodCategories values('indian');
 insert into FoodCategories values('malay');
 insert into FoodCategories values('drinks');
 
-insert into BelongsTo values('chicken rice', 'chinese');
-insert into BelongsTo values('steak', 'western');
-insert into BelongsTo values('bubble tea', 'drinks');
-insert into BelongsTo values('prata', 'indian');
-insert into BelongsTo values('bak kut teh', 'chinese');
-insert into BelongsTo values('nasi lemak', 'malay');
-insert into BelongsTo values('nasi padang', 'malay');
-insert into BelongsTo values('nasi goreng', 'malay');
-insert into BelongsTo values('murtabak', 'indian');
+insert into BelongsTo values(1, 'chicken rice', 'chinese');
+insert into BelongsTo values(7, 'steak', 'western');
+insert into BelongsTo values(3, 'bubble tea', 'drinks');
+insert into BelongsTo values(2, 'bak kut teh', 'chinese');
+insert into BelongsTo values(5, 'prata', 'indian');
+insert into BelongsTo values(6, 'nasi lemak', 'malay');
+insert into BelongsTo values(4, 'nasi padang', 'malay');
+insert into BelongsTo values(4, 'nasi goreng', 'malay');
+insert into BelongsTo values(5, 'murtabak', 'indian');
 
-insert into Restaurants(rName, minDeliveryCost) values('tian tian', 7);
-insert into Restaurants(rName, minDeliveryCost) values('a1 bakkutteh place', 20);
-insert into Restaurants(rName, minDeliveryCost) values('koi', 5);
-insert into Restaurants(rName, minDeliveryCost) values('ameens', 15);
-insert into Restaurants(rName, minDeliveryCost) values('prata house', 10);
-insert into Restaurants(rName, minDeliveryCost) values('makcik shop', 5);
-insert into Restaurants(rName, minDeliveryCost) values('astons', 8);
-
-insert into Sells values('tian tian', 'chicken rice');
-insert into Sells values('astons', 'steak');
-insert into Sells values('koi', 'bubble tea');
-insert into Sells values('prata house', 'prata');
-insert into Sells values('a1 bakkutteh place', 'bak kut teh');
-insert into Sells values('makcik shop', 'nasi padang');
-insert into Sells values('makcik shop', 'nasi lemak');
-insert into Sells values('ameens', 'nasi goreng');
-insert into Sells values('prata house', 'murtabak');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (10, 1, 10.8, 2, 'angmokio blk 888');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (15, 2.5, 17.3, 2, 'angmokio blk 288');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (11, 1, 11.8, 2, 'angmokio blk 588');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (14, 2, 15.8, 2, 'angmokio blk 188');
+insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (8, 0.5, 8.3, 2, 'angmokio blk 88');
 
 -- not used since promotable is not fully completed
 INSERT INTO Promotions (pid, startDate, endDate) VALUES

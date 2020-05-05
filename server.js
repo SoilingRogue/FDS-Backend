@@ -26,6 +26,7 @@ const db = new Pool({
 
 // Controllers - aka, the db queries
 const main = require('./controllers/main')
+const order = require('./controllers/order')
 const food = require('./controllers/food')
 
 // App
@@ -60,6 +61,8 @@ app.post('/change_credit_card', (req, res) => main.changeCreditCard(req, res, db
 app.post('/delete_user', (req, res) => main.deleteUser(req, res, db))
 
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
+
+app.get('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

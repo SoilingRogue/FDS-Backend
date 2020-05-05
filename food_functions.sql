@@ -1,4 +1,4 @@
-------------------------- Adding Food Functionalities -----------------------------
+------------------------- Food Functionalities -----------------------------
 /*
 * Functions:
 * getFoodData(): Get food data information
@@ -12,8 +12,8 @@ AS $$
 BEGIN
  
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
-    SELECT S1.foodName, S1.rName, F1.price, F1.availability, F1.currentStock
-    FROM Sells S1 JOIN FoodItems F1 USING (foodName)
+    SELECT F1.foodName, R1.rName, F1.price, F1.availability, F1.currentStock
+    FROM FoodItems F1 join Restaurants R1 USING (rid)
     ) t;
 
 END;

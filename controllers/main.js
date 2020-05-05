@@ -50,25 +50,6 @@ const addFdsManager = (req, res, db) => {
             res.status(200).json(results.rows[0]['addfdsmanager'])
         })
 }
-    /*
-    db.query(
-        `with ins as (
-            insert into Users(email, password) 
-            values ('${email}', '${password}')
-            returning uId
-        )
-        insert into ${userType}
-        select ins.uId from ins
-        returning *`,
-        (error, results) => {
-            if (error) {
-                console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
-                return
-            }
-            res.status(200).json(results.rows[0])
-        })
-    */  
 
 const validateEmail = (req, res, db) => {
     console.log(req)
