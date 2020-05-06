@@ -1,6 +1,7 @@
 -- write triggers here
 
--- first trigger - enforcing more than 5 workers per time schedule
+-- RIDERS TRIGGERS HERE
+-- enforcing more than 5 workers per time schedule
 DROP FUNCTION IF EXISTS fiveRidersHourlyIntervalConstraint;
 CREATE OR REPLACE FUNCTION  fiveRidersHourlyIntervalConstraint() RETURNS TRIGGER AS $$
 DECLARE
@@ -38,7 +39,24 @@ CREATE CONSTRAINT TRIGGER PT_fiveRidersHourlyIntervalConstraint_trigger
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION fiveRidersHourlyIntervalConstraint();
 
--- second trigger - making sure there are enough free riders to deliver before a customer can place an order
+-- ensuring PT riders have >= 10 and <= 48 hours worked per week
+DROP FUNCTION IF EXISTS PTRidersWorkingConstraint;
+CREATE OR REPLACE FUNCTION  PTRidersWorkingConstraint() RETURNS TRIGGER AS $$
+DECLARE
+    
+BEGIN
+
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON ... CASCADE;
+CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger
+    AFTER UPDATE OF day, startTime, endTime OR DELETE ON PTShift
+    deferrable initially deferred
+    FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
+
+-- ensure each wws in mws is equivalent + 5 conseq work days
+
 
 
 

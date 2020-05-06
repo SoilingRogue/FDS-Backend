@@ -272,7 +272,6 @@ CREATE TABLE DeliveryRiders
     uid INTEGER,
     -- 0 => Avaliable, 1 => Assigned Order, 2 => Depart To Rest, 3 => Arrive At Rest, 4 => Departing From Rest, 0 => Order Delivered
     deliveryStatus INTEGER DEFAULT 0, 
-    commission FLOAT DEFAULT 0.0,
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
 );
@@ -331,7 +330,6 @@ CREATE TABLE Rates -- can consider having delivery id for delivers entity and us
 CREATE TABLE PartTime
 (
     uid INTEGER,
-    weeklyBaseSalary FLOAT CHECK (weeklyBaseSalary >= 0),
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES DeliveryRiders ON DELETE CASCADE
 );
@@ -339,7 +337,6 @@ CREATE TABLE PartTime
 CREATE TABLE FullTime
 (
     uid INTEGER,
-    monthlyBaseSalary FLOAT CHECK (monthlyBaseSalary >= 0),
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES DeliveryRiders ON DELETE CASCADE
 );
@@ -350,8 +347,8 @@ CREATE TABLE FullTime
 CREATE TABLE PTShift
 (
     day INTEGER CHECK (day >= 1 AND DAY <= 7),
-    startTime INTEGER,
-    endTime INTEGER,
+    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 >= endTime),
+    endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
     uid INTEGER,
     PRIMARY KEY (day, startTime, endTime, uid),
     FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
@@ -370,7 +367,6 @@ CREATE TABLE FTShift
 CREATE TABLE WWS
 (
     uid INTEGER,
-    totalHours INTEGER,
     week INTEGER,
     PRIMARY KEY (uid, week),
     FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
@@ -380,7 +376,6 @@ CREATE TABLE MWS
 (
     uid INTEGER,
     month INTEGER CHECK (month >= 1 AND month <= 12),
-    totalHours INTEGER,
     startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
     endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
     PRIMARY KEY (uid, month),
