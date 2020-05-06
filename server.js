@@ -26,6 +26,7 @@ const db = new Pool({
 
 // Controllers - aka, the db queries
 const main = require('./controllers/main')
+const order = require('./controllers/order')
 const food = require('./controllers/food')
 
 // App
@@ -47,7 +48,7 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(morgan('combined')) // use 'tiny' or 'combined'
 
-// App Routes
+// auth routes
 app.post('/add_customer', (req, res) => main.addCustomer(req, res, db))
 app.post('/add_delivery_rider', (req, res) => main.addDeliveryRider(req, res, db))
 app.post('/add_restaurant_staff', (req, res) => main.addRestaurantStaff(req, res, db))
@@ -59,7 +60,10 @@ app.post('/change_password', (req, res) => main.changePassword(req, res, db))
 app.post('/change_credit_card', (req, res) => main.changeCreditCard(req, res, db))
 app.post('/delete_user', (req, res) => main.deleteUser(req, res, db))
 
+app.post('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
+
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
+
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

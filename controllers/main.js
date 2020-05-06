@@ -25,9 +25,9 @@ const addDeliveryRider = (req, res, db) => {
         })
 }
 const addRestaurantStaff = (req, res, db) => {
-    const { email, password } = req.body
+    const { email, password, restaurantName } = req.body
     db.query(
-        `select addRestaurantStaff('${email}','${password}')`,
+        `select addRestaurantStaff('${email}','${password}', '${restaurantName}')`,
         (error, results) => {
             if (error) {
                 console.log(error)
@@ -50,25 +50,6 @@ const addFdsManager = (req, res, db) => {
             res.status(200).json(results.rows[0]['addfdsmanager'])
         })
 }
-    /*
-    db.query(
-        `with ins as (
-            insert into Users(email, password) 
-            values ('${email}', '${password}')
-            returning uId
-        )
-        insert into ${userType}
-        select ins.uId from ins
-        returning *`,
-        (error, results) => {
-            if (error) {
-                console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
-                return
-            }
-            res.status(200).json(results.rows[0])
-        })
-    */  
 
 const validateEmail = (req, res, db) => {
     console.log(req)
@@ -106,7 +87,6 @@ const validatePassword = (req, res, db) => {
                 res.status(400).json({ dbError: `DB error: ${error}` })
                 return
             }
-            console.log(results)
             if (results.rowCount > 0)
                 res.status(200).json(results.rows[0])
             else
