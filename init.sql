@@ -211,8 +211,8 @@ CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will
 CREATE TABLE ConsistsOf
 (
     oid INTEGER NOT NULL,
-    foodName VARCHAR(50) NOT NULL,
     rid INTEGER,
+    foodName VARCHAR(50) NOT NULL,
     quantity INTEGER CHECK (quantity > 0),
     PRIMARY KEY (oid, foodName),
     FOREIGN KEY (oid) REFERENCES Orders,
@@ -235,71 +235,72 @@ CREATE TABLE Applies -- links both res & fds promos to order
 
 CREATE TABLE Users
 (
-    uId SERIAL,
+    uid SERIAL,
     email VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL,
-    PRIMARY KEY (uId)
+    PRIMARY KEY (uid)
 );
 
 CREATE TABLE Managers
 (
-    uId INTEGER,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
+    uid INTEGER,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
 );
 
 CREATE TABLE RestaurantStaff
 (
-    uId INTEGER,
+    uid INTEGER,
     rId INTEGER,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE,
     FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE
 );
 
 CREATE TABLE Customers
 (
-    uId INTEGER,
+    uid INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
     creditCard CHAR(16) DEFAULT NULL,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
 );
 
 CREATE TABLE DeliveryRiders
 (
-    uId INTEGER,
-    deliveryStatus BIT DEFAULT 0::BIT,
+    uid INTEGER,
+    -- 0 => Avaliable, 1 => Assigned Order, 2 => Depart To Rest, 3 => Arrive At Rest, 4 => Departing From Rest, 0 => Order Delivered
+    deliveryStatus INTEGER DEFAULT 0, 
     commission FLOAT DEFAULT 0.0,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES Users ON DELETE CASCADE
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
 );
 
 -- Customer-order relations
 
 CREATE TABLE Places
 (
-    uId INTEGER,
+    uid INTEGER,
     oid INTEGER,
-    PRIMARY KEY (uId, oid),
-    FOREIGN KEY (uId) REFERENCES Customers,
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 -- Rider-order relations
 
-CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
+CREATE TABLE Delivers
 (
-    uId INTEGER,
-    oid INTEGER,
+    uid INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
     tOrderPlaced TIMESTAMP DEFAULT NOW(),
     tDepartToRest TIMESTAMP,
     tArriveAtRest TIMESTAMP,
     tDepartFromRest TIMESTAMP,
     tDeliverOrder TIMESTAMP,
     PRIMARY KEY (oid),
-    FOREIGN KEY (uId) REFERENCES DeliveryRiders,
+    FOREIGN KEY (uid) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -307,21 +308,21 @@ CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
 
 CREATE TABLE Reviews
 (
-    uId INTEGER,
+    uid INTEGER,
     oid INTEGER,
     reviewTxt VARCHAR(100),
-    PRIMARY KEY (uId, oid),
-    FOREIGN KEY (uId) REFERENCES Customers,
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
 CREATE TABLE Rates -- can consider having delivery id for delivers entity and use that ref here
 (
-    uId INTEGER,
+    uid INTEGER,
     oid INTEGER,
     rating INTEGER CHECK (rating >= 0 AND rating <= 5),
-    PRIMARY KEY (uId, oid),
-    FOREIGN KEY (uId) REFERENCES Customers,
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Delivers
 );
 
@@ -329,18 +330,18 @@ CREATE TABLE Rates -- can consider having delivery id for delivers entity and us
 
 CREATE TABLE PartTime
 (
-    uId INTEGER,
+    uid INTEGER,
     weeklyBaseSalary FLOAT CHECK (weeklyBaseSalary >= 0),
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES DeliveryRiders ON DELETE CASCADE
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES DeliveryRiders ON DELETE CASCADE
 );
 
 CREATE TABLE FullTime
 (
-    uId INTEGER,
+    uid INTEGER,
     monthlyBaseSalary FLOAT CHECK (monthlyBaseSalary >= 0),
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES DeliveryRiders ON DELETE CASCADE
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES DeliveryRiders ON DELETE CASCADE
 );
 
 -- Work schedule entities - part time, full time, days & shifts
@@ -351,9 +352,9 @@ CREATE TABLE PTShift
     day INTEGER CHECK (day >= 1 AND DAY <= 7),
     startTime INTEGER,
     endTime INTEGER,
-    uId INTEGER,
-    PRIMARY KEY (day, startTime, endTime, uId),
-    FOREIGN KEY (uId) REFERENCES PartTime ON DELETE CASCADE
+    uid INTEGER,
+    PRIMARY KEY (day, startTime, endTime, uid),
+    FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
 );
 
 CREATE TABLE FTShift
@@ -368,22 +369,22 @@ CREATE TABLE FTShift
 
 CREATE TABLE WWS
 (
-    uId INTEGER,
+    uid INTEGER,
     totalHours INTEGER,
     week INTEGER,
-    PRIMARY KEY (uId, week),
-    FOREIGN KEY (uId) REFERENCES PartTime ON DELETE CASCADE
+    PRIMARY KEY (uid, week),
+    FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
 );
 
 CREATE TABLE MWS
 (
-    uId INTEGER,
+    uid INTEGER,
     month INTEGER CHECK (month >= 1 AND month <= 12),
     totalHours INTEGER,
     startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
     endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    PRIMARY KEY (uId, month),
-    FOREIGN KEY (uId) REFERENCES FullTime ON DELETE CASCADE
+    PRIMARY KEY (uid, month),
+    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE
 );
 
 -- remember to update this table when fttimescheduling is edited or vice versa
@@ -391,18 +392,18 @@ CREATE TABLE DayCombinations
 (
     startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
     endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    uId INTEGER,
-    PRIMARY KEY (uId),
-    FOREIGN KEY (uId) REFERENCES FullTime ON DELETE CASCADE
+    uid INTEGER,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE
 );
 
 -- remember to update this table when daycombinations is edited or vice versa
 CREATE TABLE FullTimeScheduling
 (
-    uId INTEGER,
+    uid INTEGER,
     day INTEGER CHECK (day >= 1 AND day <= 7),
     shift INTEGER,
-    PRIMARY KEY (uId, day, shift),
-    FOREIGN KEY (uId) REFERENCES FullTime ON DELETE CASCADE,
+    PRIMARY KEY (uid, day, shift),
+    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE,
     FOREIGN KEY (shift) REFERENCES FTShift
 );

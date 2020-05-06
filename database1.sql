@@ -52,30 +52,35 @@ insert into BelongsTo values(5, 'murtabak', 'indian');
 -- Rough order flow -- 
 
 -- Create users
-select null from addCustomer('cust@gmail.com', 'password'); -- uId 1
-select null from addDeliveryRider('rider@gmail.com', 'password'); -- uId 2
+select null from addCustomer('cust@gmail.com', 'password'); -- uid 1
+select null from addDeliveryRider('rider@gmail.com', 'password'); -- uid 2
 
+CALL addOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
+    12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
+
+CALL addOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
+    12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
 -- Update stock (not shown)
 
 -- Insert order into Orders and fooditems into ConsistsOf
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
-insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'prata', 5, 1);
-insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'murtabak', 5, 2);
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'prata', 5, 1);
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'murtabak', 5, 2);
 
 -- Insert order into Places 
-insert into Places (uId, oid) values (1, 1);
+-- insert into Places (uid, oid) values (1, 1);
 
 -- Add reward points to User
-update Customers set rewardPoints = rewardPoints + 1 where uId = 1;
+-- update Customers set rewardPoints = rewardPoints + 1 where uid = 1;
 
 -- Assign delivery rider 
-insert into Delivers (uid, oid, tOrderPlaced) values (2, 1, DEFAULT);
+-- insert into Delivers (uid, oid, tOrderPlaced) values (2, 1, DEFAULT);
 
 -- Simulate delivery
-update Delivers set tDepartToRest = now() where oid = 1;
-update Delivers set tArriveAtRest = now() where oid = 1;
-update Delivers set tDepartFromRest = now() where oid = 1;
-update Delivers set tDeliverOrder = now() where oid = 1;
+-- update Delivers set tDepartToRest = now() where oid = 1;
+-- update Delivers set tArriveAtRest = now() where oid = 1;
+-- update Delivers set tDepartFromRest = now() where oid = 1;
+-- update Delivers set tDeliverOrder = now() where oid = 1;
 -- Completed Delivery (Can be identified by tDeliverOrder not null)
 
 -- not used since promotable is not fully completed
@@ -87,7 +92,7 @@ INSERT INTO Promotions (pid, startDate, endDate) VALUES
 -- No orders added since the data for tables should be created when order is made
 
 -- Users
-INSERT INTO Users (uId, email, password) VALUES
+INSERT INTO Users (uid, email, password) VALUES
 (0, "rider0@gmail.com", "qwerty"),
 (1, "rider1@gmail.com", "qwerty"),
 (2, "rider2@gmail.com", "qwerty"),
@@ -105,20 +110,20 @@ INSERT INTO Users (uId, email, password) VALUES
 (14, "manager0@gmail.com", "qwerty"),
 (15, "staff@gmail.com", "qwerty");
 
-INSERT INTO Managers (uId) VALUES
+INSERT INTO Managers (uid) VALUES
 (14);
 
-INSERT INTO RestaurantStaff (uId) VALUES
+INSERT INTO RestaurantStaff (uid) VALUES
 (15);
 
-INSERT INTO Customers (uId, rewardPoints, creditCard) VALUES
+INSERT INTO Customers (uid, rewardPoints, creditCard) VALUES
 (10, 1000000, "fsfsfsfsffffffff"),
 (11, 0, "fsfsfsfsffffffff"), -- same credit card number as prev customer - valid?
 (12, 1, "fsfsfsfsfffffffs"),
 (13, 0, "fsfsfsfsffffsfff");
 
 -- init riders & respective schedules
-INSERt INTO DeliveryRiders (uId, deliveryStatus, commision) VALUES
+INSERt INTO DeliveryRiders (uid, deliveryStatus, commision) VALUES
 (0, 1, 1),
 (1, 1, 0.01),
 (2, 1, 9.99),
@@ -131,14 +136,14 @@ INSERt INTO DeliveryRiders (uId, deliveryStatus, commision) VALUES
 (9, 1, 99999990);
 
 -- how to enforce delivery rider belong to either partime XOR fulltime
-INSERT INTO PartTime (uId, weeklyBaseSalary) VALUES
+INSERT INTO PartTime (uid, weeklyBaseSalary) VALUES
 (0, 1),
 (1, 1.1),
 (2, 0),
 (3, 9999999),
 (4, 3.3333333); -- float value smaller than the smallest currency decimal point
 
-INSERT INTO FullTime (uId, monthlyBaseSalary) VALUES
+INSERT INTO FullTime (uid, monthlyBaseSalary) VALUES
 (5, 0),
 (6, 0),
 (7, 3000),
@@ -232,7 +237,7 @@ INSERT INTO HasShifts (id, sid, day) VALUES
 (55, 11, 7);
 
 -- mnissing init for part time
-INSERT INTO HasSchedule (uId, id) VALUES
+INSERT INTO HasSchedule (uid, id) VALUES
 -- for full time riders
 -- rider 5 works mon- friday shift 1
 -- rider 6 mon-friday shift 2

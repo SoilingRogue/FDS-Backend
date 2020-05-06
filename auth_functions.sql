@@ -34,9 +34,9 @@ DECLARE
 newUid integer;
 BEGIN
  
- SELECT addUser(newEmail, newPassword) into newUid;
+ SELECT addUser(newEmail, newPassword) INTO newUid;
 
- RETURN QUERY INSERT INTO Customers (uId, rewardPoints, creditCard) 
+ RETURN QUERY INSERT INTO Customers (uid, rewardPoints, creditCard) 
  VALUES (newUid, DEFAULT, DEFAULT)
  RETURNING json_build_object('uid', uid, 'rewardPoints', rewardPoints, 'creditCard', creditCard);
 
@@ -55,9 +55,9 @@ DECLARE
 newUid integer;
 BEGIN
 	
-    SELECT addUser(newEmail, newPassword) into newUid;
+    SELECT addUser(newEmail, newPassword) INTO newUid;
 
-    RETURN QUERY INSERT INTO DeliveryRiders (uId, deliveryStatus, commission) 
+    RETURN QUERY INSERT INTO DeliveryRiders (uid, deliveryStatus, commission) 
 	VALUES (newUid, DEFAULT, DEFAULT)
     RETURNING json_build_object('uid', uid, 'deliveryStatus', deliveryStatus, 'commission', commission);
 
@@ -75,9 +75,9 @@ DECLARE
 newUid integer;
 BEGIN
 
-    SELECT addUser(newEmail, newPassword) into newUid;
+    SELECT addUser(newEmail, newPassword) INTO newUid;
 
-    RETURN QUERY INSERT INTO RestaurantStaff (uId, rid) 
+    RETURN QUERY INSERT INTO RestaurantStaff (uid, rid) 
 	    VALUES (newUid, rid)
         RETURNING json_build_object('uid', uid);
         
@@ -95,10 +95,10 @@ DECLARE
 newUid integer;
 BEGIN
 	
-    SELECT addUser(newEmail, newPassword) into newUid;
+    SELECT addUser(newEmail, newPassword) INTO newUid;
 
     RETURN QUERY 
-    INSERT INTO Managers (uId) 
+    INSERT INTO Managers (uid) 
 	VALUES (newUid)
     RETURNING json_build_object('uid', uid);
 
