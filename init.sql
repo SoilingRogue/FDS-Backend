@@ -279,10 +279,10 @@ CREATE TABLE DeliveryRiders
 
 CREATE TABLE Places
 (
-    cId INTEGER,
+    uId INTEGER,
     oid INTEGER,
-    PRIMARY KEY (cId, oid),
-    FOREIGN KEY (cId) REFERENCES Customers,
+    PRIMARY KEY (uId, oid),
+    FOREIGN KEY (uId) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
 
@@ -292,6 +292,11 @@ CREATE TABLE Delivers -- MISSING t1,t2,t3,t4 -> forgot what those are
 (
     uId INTEGER,
     oid INTEGER,
+    tOrderPlaced TIMESTAMP DEFAULT NOW(),
+    tDepartToRest TIMESTAMP,
+    tArriveAtRest TIMESTAMP,
+    tDepartFromRest TIMESTAMP,
+    tDeliverOrder TIMESTAMP,
     PRIMARY KEY (oid),
     FOREIGN KEY (uId) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders

@@ -1,4 +1,4 @@
--- Mock Data to test
+-- Add data for restaurant and food
 insert into Restaurants(rName, minOrderCost) values('tian tian', 7);
 insert into Restaurants(rName, minOrderCost) values('a1 bakkutteh place', 20);
 insert into Restaurants(rName, minOrderCost) values('koi', 5);
@@ -33,12 +33,50 @@ insert into BelongsTo values(4, 'nasi padang', 'malay');
 insert into BelongsTo values(4, 'nasi goreng', 'malay');
 insert into BelongsTo values(5, 'murtabak', 'indian');
 
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (10, 1, 10.8, 2, 'angmokio blk 888');
+
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (10, 1, 10.8, 2, 'angmokio blk 888');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (1, 'chicken rice', 1, 1);
+
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (15, 2.5, 17.3, 2, 'angmokio blk 288');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (3, 'bak kut teh', 2, 1);
+
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (11, 1, 11.8, 2, 'angmokio blk 588');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (4, 'nasi lemak', 6, 1);
+
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (14, 2, 15.8, 2, 'angmokio blk 188');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (5, 'nasi padang', 4, 1);
+
+-- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (8, 0.5, 8.3, 2, 'angmokio blk 88');
+-- insert into ConsistsOf (oid, foodName, rid, quantity) values (6, 'bubble tea', 3, 1);
+
+-- Rough order flow -- 
+
+-- Create users
+select null from addCustomer('cust@gmail.com', 'password'); -- uId 1
+select null from addDeliveryRider('rider@gmail.com', 'password'); -- uId 2
+
+-- Update stock (not shown)
+
+-- Insert order into Orders and fooditems into ConsistsOf
 insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (15, 2.5, 17.3, 2, 'angmokio blk 288');
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (11, 1, 11.8, 2, 'angmokio blk 588');
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (14, 2, 15.8, 2, 'angmokio blk 188');
-insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (8, 0.5, 8.3, 2, 'angmokio blk 88');
+insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'prata', 5, 1);
+insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'murtabak', 5, 2);
+
+-- Insert order into Places 
+insert into Places (uId, oid) values (1, 1);
+
+-- Add reward points to User
+update Customers set rewardPoints = rewardPoints + 1 where uId = 1;
+
+-- Assign delivery rider 
+insert into Delivers (uid, oid, tOrderPlaced) values (2, 1, DEFAULT);
+
+-- Simulate delivery
+update Delivers set tDepartToRest = now() where oid = 1;
+update Delivers set tArriveAtRest = now() where oid = 1;
+update Delivers set tDepartFromRest = now() where oid = 1;
+update Delivers set tDeliverOrder = now() where oid = 1;
+-- Completed Delivery (Can be identified by tDeliverOrder not null)
 
 -- not used since promotable is not fully completed
 INSERT INTO Promotions (pid, startDate, endDate) VALUES
