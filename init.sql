@@ -208,6 +208,7 @@ CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will
     deliveryCost FLOAT NOT NULL,
     totalCost FLOAT NOT NULL,
     pointsUsed INTEGER,
+    location VARCHAR(50) NOT NULL,
     PRIMARY KEY (oid)
 );
 
