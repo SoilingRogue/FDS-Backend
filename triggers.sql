@@ -43,15 +43,24 @@ CREATE CONSTRAINT TRIGGER PT_fiveRidersHourlyIntervalConstraint_trigger
 DROP FUNCTION IF EXISTS PTRidersWorkingConstraint;
 CREATE OR REPLACE FUNCTION  PTRidersWorkingConstraint() RETURNS TRIGGER AS $$
 DECLARE
-    
+    id INTEGER;
+    time INTEGER;
 BEGIN
-
+    id = NEW.uid;
+    SELECT SUM(*) INTO time
+    FROM 
+    (SELECT endTime - startTime as shiftTime FROM PTShift
+    WHERE uid = id) AS temp;
+    IF time < 10 or time > 48 THEN
+        RAISE exception 'Invalid working hours for rider id: %', id;
+    END IF;
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON ... CASCADE;
+DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON PTShift CASCADE;
 CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger
-    AFTER UPDATE OF day, startTime, endTime OR DELETE ON PTShift
+    AFTER UPDATE OF day, startTime, endTime OR INSERT OR DELETE ON PTShift
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
 

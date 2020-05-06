@@ -138,7 +138,7 @@ CREATE TABLE PriceTimeOrderPromotions
 (
     pid INTEGER,
     discountPercentage FLOAT CHECK (discountPercentage >= 0),
-    baseAmount FLOAT CHECK (baseAmount >= 0),
+    basePrice FLOAT CHECK (basePrice >= 0),
     PRIMARY KEY (pid),
     FOREIGN KEY (pid) REFERENCES RestaurantPromotions ON DELETE CASCADE
 );
@@ -147,7 +147,7 @@ CREATE TABLE PriceTimeItemPromotions
 (
     pid INTEGER,
     discountPercentage FLOAT CHECK (discountPercentage >= 0),
-    baseAmount FLOAT CHECK (baseAmount >= 0),
+    baseQuantity FLOAT CHECK (baseQuantity >= 0),
     rid INTEGER NOT NULL,
     item VARCHAR(50),
     PRIMARY KEY (pid, item),
