@@ -63,7 +63,6 @@ const placeOrder = async (req, res, db) => {
     } else {
         rewardPoints = 0
     }
-    console.log(rewardPoints)
     db.query(
         `CALL placeOrder(${uid}, ARRAY[${serialisedOrder}], ${foodCost}::FLOAT, ${0.2 * foodCost}::FLOAT, ${1.2 * foodCost}::FLOAT, ${rewardPoints}::INTEGER, '${deliveryLocation}'::TEXT);`,
         (error, results) => {
@@ -77,9 +76,67 @@ const placeOrder = async (req, res, db) => {
     )
 }
 
+const setTDepartToRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDepartToRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+
+const setTArriveAtRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTArriveAtRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+const setTDepartFromRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDepartFromRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+const setTDeliverOrder = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDeliverOrder(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+
 module.exports = {
     checkValidOrder,
     placeOrder,
     getRecentOrderLocations,
-    hasOngoingOrder
+    hasOngoingOrder,
+    setTDepartToRest,
+    setTArriveAtRest,
+    setTDepartFromRest,
+    setTDeliverOrder
 }
