@@ -299,6 +299,7 @@ CREATE TABLE Delivers
     tArriveAtRest TIMESTAMP,
     tDepartFromRest TIMESTAMP,
     tDeliverOrder TIMESTAMP,
+    isCompleted BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (oid),
     FOREIGN KEY (uid) REFERENCES DeliveryRiders,
     FOREIGN KEY (oid) REFERENCES Orders

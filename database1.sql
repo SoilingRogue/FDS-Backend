@@ -54,12 +54,15 @@ insert into BelongsTo values(5, 'murtabak', 'indian');
 -- Create users
 select null from addCustomer('cust@gmail.com', 'password'); -- uid 1
 select null from addDeliveryRider('rider@gmail.com', 'password'); -- uid 2
+select null from addDeliveryRider('rider1@gmail.com', 'password'); -- uid 3
+select null from addDeliveryRider('rider2@gmail.com', 'password'); -- uid 4
+select null from addDeliveryRider('rider3@gmail.com', 'password'); -- uid 5
 
-CALL addOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
-    12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
+-- CALL placeOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
+--     12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
 
-CALL addOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
-    12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
+-- CALL placeOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
+--     12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
 -- Update stock (not shown)
 
 -- Insert order into Orders and fooditems into ConsistsOf

@@ -25,7 +25,7 @@ const db = new Pool({
 })
 
 // Controllers - aka, the db queries
-const main = require('./controllers/main')
+const auth = require('./controllers/auth')
 const order = require('./controllers/order')
 const food = require('./controllers/food')
 
@@ -49,18 +49,21 @@ app.use(bodyParser.json())
 app.use(morgan('combined')) // use 'tiny' or 'combined'
 
 // auth routes
-app.post('/add_customer', (req, res) => main.addCustomer(req, res, db))
-app.post('/add_delivery_rider', (req, res) => main.addDeliveryRider(req, res, db))
-app.post('/add_restaurant_staff', (req, res) => main.addRestaurantStaff(req, res, db))
-app.post('/add_fds_manager', (req, res) => main.addFdsManager(req, res, db))
+app.post('/add_customer', (req, res) => auth.addCustomer(req, res, db))
+app.post('/add_delivery_rider', (req, res) => auth.addDeliveryRider(req, res, db))
+app.post('/add_restaurant_staff', (req, res) => auth.addRestaurantStaff(req, res, db))
+app.post('/add_fds_manager', (req, res) => auth.addFdsManager(req, res, db))
 
-app.post('/validate_email', (req, res) => main.validateEmail(req, res, db))
-app.post('/validate_password', (req, res) => main.validatePassword(req, res, db))
-app.post('/change_password', (req, res) => main.changePassword(req, res, db))
-app.post('/change_credit_card', (req, res) => main.changeCreditCard(req, res, db))
-app.post('/delete_user', (req, res) => main.deleteUser(req, res, db))
+app.post('/validate_email', (req, res) => auth.validateEmail(req, res, db))
+app.post('/validate_password', (req, res) => auth.validatePassword(req, res, db))
+app.post('/change_password', (req, res) => auth.changePassword(req, res, db))
+app.post('/change_credit_card', (req, res) => auth.changeCreditCard(req, res, db))
+app.post('/delete_user', (req, res) => auth.deleteUser(req, res, db))
 
 app.post('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
+app.post('/get_recent_order_locations', (req, res) => order.getRecentOrderLocations(req, res, db))
+app.post('/place_order', (req, res) => order.placeOrder(req, res, db))
+app.post('/has_ongoing_order', (req, res) => order.hasOngoingOrder(req, res, db))
 
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
 

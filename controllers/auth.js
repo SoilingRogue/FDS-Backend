@@ -52,7 +52,6 @@ const addFdsManager = (req, res, db) => {
 }
 
 const validateEmail = (req, res, db) => {
-    console.log(req)
     const { email, userType } = req.body
     db.query(
         `with temp as (
