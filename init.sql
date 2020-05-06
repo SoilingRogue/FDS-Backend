@@ -50,9 +50,9 @@ DROP TABLE IF EXISTS Reviews
 CASCADE;
 DROP TABLE IF EXISTS Rates
 CASCADE;
-DROP TABLE IF EXISTS PartTime
+DROP TABLE IF EXISTS PartTimers
 CASCADE;
-DROP TABLE IF EXISTS FullTime
+DROP TABLE IF EXISTS FullTimers
 CASCADE;
 DROP TABLE IF EXISTS PTShift
 CASCADE;
@@ -74,14 +74,13 @@ CASCADE;
 -- Decide which relation requires on DELETE CASCADE/ NOT NULL etc.
 
 
-
 -- Restaurant entities
 
 CREATE TABLE Restaurants
 (
     rid SERIAL,
-    rName VARCHAR(50),
-    minOrderCost FLOAT CHECK (minOrderCost >= 0),
+    rName VARCHAR(50) NOT NULL,
+    minOrderCost FLOAT NOT NULL DEFAULT 0 CHECK (minOrderCost >= 0),
     PRIMARY KEY (rid)
 );
 
@@ -89,21 +88,22 @@ CREATE TABLE Restaurants
 
 CREATE TABLE FoodItems
 (
-    rid INTEGER,
-    foodName VARCHAR(50),
-    availability INTEGER,
-    dailyStock INTEGER CHECK (dailyStock >= 0),
-    currentStock INTEGER CHECK (currentStock <= dailyStock AND currentStock >= 0),
-    price FLOAT CHECK (price >= 0),
+    rid INTEGER NOT NULL,
+    foodName VARCHAR(50) NOT NULL,
+    availability INTEGER NOT NULL,
+    dailyLimit INTEGER NOT NULL CHECK (dailyLimit >= 0),
+    currentOrders INTEGER NOT NULL CHECK (currentOrders <= dailyLimit AND currentOrders >= 0),
+    price FLOAT NOT NULL CHECK (price >= 0),
     PRIMARY KEY (rid, foodName),
     FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE
 );
 
 CREATE TABLE FoodCategories
 (
-    categories VARCHAR(50),
+    categories VARCHAR(50) NOT NULL UNIQUE,
     PRIMARY KEY (categories)
 );
+
 
 -- Food-Category relations
 
@@ -115,6 +115,134 @@ CREATE TABLE BelongsTo
     PRIMARY KEY (rid, foodName, categories),
     FOREIGN KEY (rid, foodName) REFERENCES FoodItems ON DELETE CASCADE,
     FOREIGN KEY (categories) REFERENCES FoodCategories
+);
+
+
+-- Users entities - consists of FDSManager, RestStaff, Riders & Customers
+
+CREATE TABLE Users
+(
+    uid SERIAL,
+    email VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    PRIMARY KEY (uid)
+);
+
+CREATE TABLE Customers
+(
+    uid INTEGER,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    rewardPoints INTEGER NOT NULL DEFAULT 0 CHECK (rewardPoints >= 0),
+    creditCard CHAR(16) DEFAULT NULL,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
+);
+
+CREATE TABLE DeliveryRiders
+(
+    uid INTEGER,
+    -- 0 => Avaliable, 1 => Assigned Order, 2 => Depart To Rest, 
+    -- 3 => Arrive At Rest, 4 => Departing From Rest, 0 => Order Delivered
+    deliveryStatus INTEGER NOT NULL DEFAULT 0, 
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
+);
+
+CREATE TABLE RestaurantStaff
+(
+    uid INTEGER,
+    rId INTEGER,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE,
+    FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE
+);
+
+CREATE TABLE Managers
+(
+    uid INTEGER,
+    PRIMARY KEY (uid),
+    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
+);
+
+
+-- Order entities
+
+CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will link both entities tgt
+(
+    oid SERIAL,
+    foodCost FLOAT NOT NULL CHECK (foodCost >= 0),
+    deliveryCost FLOAT NOT NULL CHECK (deliveryCost >= 0),
+    totalCost FLOAT NOT NULL CHECK (totalCost >= 0),
+    pointsUsed INTEGER NOT NULL CHECK (pointsUsed >= 0),
+    ordered_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deliveryLocation TEXT NOT NULL,
+    PRIMARY KEY (oid)
+);
+
+-- Order-Food relations
+
+CREATE TABLE ConsistsOf
+(
+    oid INTEGER NOT NULL,
+    rid INTEGER NOT NULL,
+    foodName VARCHAR(50) NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    PRIMARY KEY (oid, rid, foodName),
+    FOREIGN KEY (oid) REFERENCES Orders,
+    FOREIGN KEY (rid, foodName) REFERENCES FoodItems,
+    FOREIGN KEY (rid) REFERENCES Restaurants
+);
+
+-- Customer-order relations
+
+CREATE TABLE Places
+(
+    uid INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
+    FOREIGN KEY (oid) REFERENCES Orders
+);
+
+-- Rider-order relations
+
+CREATE TABLE Delivers
+(
+    uid INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
+    tOrderPlaced TIMESTAMP DEFAULT NOW(),
+    tDepartToRest TIMESTAMP,
+    tArriveAtRest TIMESTAMP,
+    tDepartFromRest TIMESTAMP,
+    tDeliverOrder TIMESTAMP,
+    isCompleted BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (oid),
+    FOREIGN KEY (uid) REFERENCES DeliveryRiders,
+    FOREIGN KEY (oid) REFERENCES Orders
+);
+
+-- Reviews & rates relations
+
+CREATE TABLE Reviews
+(
+    uid INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
+    reviewTxt VARCHAR(100) NOT NULL,
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
+    FOREIGN KEY (oid) REFERENCES Orders
+);
+
+CREATE TABLE Rates
+(
+    uid INTEGER NOT NULL,
+    drid INTEGER NOT NULL,
+    oid INTEGER NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 0 AND rating <= 5),
+    PRIMARY KEY (uid, oid),
+    FOREIGN KEY (uid) REFERENCES Customers,
+    FOREIGN KEY (drid) REFERENCES DeliveryRiders(uid),
+    FOREIGN KEY (oid) REFERENCES Delivers
 );
 
 -- Promotion entities
@@ -192,34 +320,6 @@ CREATE TABLE HasPromotions
     FOREIGN KEY (pid) REFERENCES RestaurantPromotions ON DELETE CASCADE
 );
 
--- Order entities
-
-CREATE TABLE Orders -- removed fds & res promo attributes since applies etc will link both entities tgt
-(
-    oid SERIAL,
-    foodCost FLOAT NOT NULL CHECK (foodCost >= 0),
-    deliveryCost FLOAT NOT NULL CHECK (deliveryCost >= 0),
-    totalCost FLOAT NOT NULL CHECK (totalCost >= 0),
-    pointsUsed INTEGER CHECK (pointsUsed >= 0),
-    ordered_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    deliveryLocation TEXT,
-    PRIMARY KEY (oid)
-);
-
--- Order-Food relations
-
-CREATE TABLE ConsistsOf
-(
-    oid INTEGER NOT NULL,
-    rid INTEGER,
-    foodName VARCHAR(50) NOT NULL,
-    quantity INTEGER CHECK (quantity > 0),
-    PRIMARY KEY (oid, foodName),
-    FOREIGN KEY (oid) REFERENCES Orders,
-    FOREIGN KEY (rid, foodName) REFERENCES FoodItems,
-    FOREIGN KEY (rid) REFERENCES RESTAURANTS
-);
-
 -- Order-Promotion relations
 
 CREATE TABLE Applies -- links both res & fds promos to order
@@ -231,111 +331,16 @@ CREATE TABLE Applies -- links both res & fds promos to order
     FOREIGN KEY (promo) REFERENCES Promotions
 );
 
--- Users entities - consists of FDSManager, RestStaff, Riders & Customers
-
-CREATE TABLE Users
-(
-    uid SERIAL,
-    email VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    PRIMARY KEY (uid)
-);
-
-CREATE TABLE Managers
-(
-    uid INTEGER,
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
-);
-
-CREATE TABLE RestaurantStaff
-(
-    uid INTEGER,
-    rId INTEGER,
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE,
-    FOREIGN KEY (rid) REFERENCES Restaurants ON DELETE CASCADE
-);
-
-CREATE TABLE Customers
-(
-    uid INTEGER,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    rewardPoints INTEGER DEFAULT 0 CHECK (rewardPoints >= 0),
-    creditCard CHAR(16) DEFAULT NULL,
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
-);
-
-CREATE TABLE DeliveryRiders
-(
-    uid INTEGER,
-    -- 0 => Avaliable, 1 => Assigned Order, 2 => Depart To Rest, 3 => Arrive At Rest, 4 => Departing From Rest, 0 => Order Delivered
-    deliveryStatus INTEGER DEFAULT 0, 
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users ON DELETE CASCADE
-);
-
--- Customer-order relations
-
-CREATE TABLE Places
-(
-    uid INTEGER,
-    oid INTEGER,
-    PRIMARY KEY (uid, oid),
-    FOREIGN KEY (uid) REFERENCES Customers,
-    FOREIGN KEY (oid) REFERENCES Orders
-);
-
--- Rider-order relations
-
-CREATE TABLE Delivers
-(
-    uid INTEGER NOT NULL,
-    oid INTEGER NOT NULL,
-    tOrderPlaced TIMESTAMP DEFAULT NOW(),
-    tDepartToRest TIMESTAMP,
-    tArriveAtRest TIMESTAMP,
-    tDepartFromRest TIMESTAMP,
-    tDeliverOrder TIMESTAMP,
-    isCompleted BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (oid),
-    FOREIGN KEY (uid) REFERENCES DeliveryRiders,
-    FOREIGN KEY (oid) REFERENCES Orders
-);
-
--- Reviews & rates relations
-
-CREATE TABLE Reviews
-(
-    uid INTEGER,
-    oid INTEGER,
-    reviewTxt VARCHAR(100),
-    PRIMARY KEY (uid, oid),
-    FOREIGN KEY (uid) REFERENCES Customers,
-    FOREIGN KEY (oid) REFERENCES Orders
-);
-
-CREATE TABLE Rates -- can consider having delivery id for delivers entity and use that ref here
-(
-    uid INTEGER,
-    oid INTEGER,
-    rating INTEGER CHECK (rating >= 0 AND rating <= 5),
-    PRIMARY KEY (uid, oid),
-    FOREIGN KEY (uid) REFERENCES Customers,
-    FOREIGN KEY (oid) REFERENCES Delivers
-);
-
 -- DeliveryRiders entities - part time & full time
 
-CREATE TABLE PartTime
+CREATE TABLE PartTimers
 (
     uid INTEGER,
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES DeliveryRiders ON DELETE CASCADE
 );
 
-CREATE TABLE FullTime
+CREATE TABLE FullTimers
 (
     uid INTEGER,
     PRIMARY KEY (uid),
@@ -348,39 +353,39 @@ CREATE TABLE FullTime
 CREATE TABLE PTShift
 (
     day INTEGER CHECK (day >= 1 AND DAY <= 7),
-    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 >= endTime),
+    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
     endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
-    uid INTEGER,
+    uid INTEGER NOT NULL,
     PRIMARY KEY (day, startTime, endTime, uid),
-    FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
 );
 
 CREATE TABLE FTShift
 (
     sId INTEGER,
-    start1 INTEGER NOT NULL,
-    end1 INTEGER NOT NULL,
-    start2 INTEGER NOT NULL,
-    end2 INTEGER NOT NULL,
+    start1 INTEGER NOT NULL CHECK (start1 >= 10 AND start1 <= 22 AND start1 < end1 AND start1 + 4 = end1),
+    end1 INTEGER NOT NULL CHECK (end1 >= 10 AND end1 <= 22 AND end1 < start2 AND end1 + 1 = start2),
+    start2 INTEGER NOT NULL CHECK (start2 >= 10 AND start2 <= 22 AND start2 < end2 AND start2 + 4 = end2),
+    end2 INTEGER NOT NULL CHECK (end2 >= 10 AND end2 <= 22),
     PRIMARY KEY (sId)
 );
 
 CREATE TABLE WWS
 (
-    uid INTEGER,
-    week INTEGER,
+    uid INTEGER NOT NULL,
+    week INTEGER NOT NULL,
     PRIMARY KEY (uid, week),
-    FOREIGN KEY (uid) REFERENCES PartTime ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
 );
 
 CREATE TABLE MWS
 (
-    uid INTEGER,
-    month INTEGER CHECK (month >= 1 AND month <= 12),
+    uid INTEGER NOT NULL,
+    month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
     startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
     endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
     PRIMARY KEY (uid, month),
-    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );
 
 -- remember to update this table when fttimescheduling is edited or vice versa
@@ -390,7 +395,7 @@ CREATE TABLE DayCombinations
     endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
     uid INTEGER,
     PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );
 
 -- remember to update this table when daycombinations is edited or vice versa
@@ -400,6 +405,6 @@ CREATE TABLE FullTimeScheduling
     day INTEGER CHECK (day >= 1 AND day <= 7),
     shift INTEGER,
     PRIMARY KEY (uid, day, shift),
-    FOREIGN KEY (uid) REFERENCES FullTime ON DELETE CASCADE,
+    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE,
     FOREIGN KEY (shift) REFERENCES FTShift
 );

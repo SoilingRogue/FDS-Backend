@@ -110,6 +110,8 @@ DECLARE
  riderId INTEGER;
 BEGIN
 
+ -- Check if food cost >= minOrderCost of restaurant 
+
  -- Insert into Order
  INSERT INTO Orders (foodCost, deliveryCost, totalCost, pointsUsed, ordered_at, deliveryLocation)
  VALUES (newFoodCost, newDeliveryCost, newTotalCost, newPointsUsed, DEFAULT, newDeliveryLocation)
@@ -119,10 +121,10 @@ BEGIN
  -- Update places table
  INSERT INTO Places (uid, oid) VALUES (inputUid, newOid);
 
- -- Update stock and add to consists of
+ -- Update current order count and add to consists of
  FOREACH newFoodItem IN ARRAY foodItemsArr
  LOOP
- 	UPDATE FoodItems SET currentStock = (currentStock - newFoodItem.qty) 
+ 	UPDATE FoodItems SET currentOrders = (currentOrders - 1) 
  	WHERE (newFoodItem.rid, newFoodItem.foodName) = (rid, foodName);
     
     INSERT INTO ConsistsOf (oid, foodName, rid, quantity) VALUES (newOid, newFoodItem.foodName, newFoodItem.rid, newFoodItem.qty);

@@ -1,8 +1,19 @@
+DROP FUNCTION IF EXISTS fiveRidersHourlyIntervalConstraint
+CASCADE;
+DROP TRIGGER IF EXISTS FT_fiveRidersHourlyIntervalConstraint_trigger ON FullTimeScheduling 
+CASCADE;
+DROP FUNCTION IF EXISTS PTRidersWorkingConstraint
+CASCADE;
+DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON PTShift 
+CASCADE;
 -- write triggers here
+
+-- USER TRIGGERS HERE
+-- Enforce when delete restaurnt, restaurant staff deleted -> user id deleted
+
 
 -- RIDERS TRIGGERS HERE
 -- enforcing more than 5 workers per time schedule
-DROP FUNCTION IF EXISTS fiveRidersHourlyIntervalConstraint;
 CREATE OR REPLACE FUNCTION  fiveRidersHourlyIntervalConstraint() RETURNS TRIGGER AS $$
 DECLARE
     i int;
@@ -27,7 +38,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS FT_fiveRidersHourlyIntervalConstraint_trigger ON FullTimeScheduling CASCADE;
 CREATE CONSTRAINT TRIGGER FT_fiveRidersHourlyIntervalConstraint_trigger
     AFTER UPDATE OF day, shift OR DELETE ON FullTimeScheduling
     deferrable initially deferred
@@ -40,7 +50,6 @@ CREATE CONSTRAINT TRIGGER PT_fiveRidersHourlyIntervalConstraint_trigger
     FOR EACH ROW EXECUTE FUNCTION fiveRidersHourlyIntervalConstraint();
 
 -- ensuring PT riders have >= 10 and <= 48 hours worked per week
-DROP FUNCTION IF EXISTS PTRidersWorkingConstraint;
 CREATE OR REPLACE FUNCTION  PTRidersWorkingConstraint() RETURNS TRIGGER AS $$
 DECLARE
     id INTEGER;
@@ -58,13 +67,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON PTShift CASCADE;
+
 CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger
     AFTER UPDATE OF day, startTime, endTime OR INSERT OR DELETE ON PTShift
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
 
 -- ensure each wws in mws is equivalent + 5 conseq work days
+
+
+
+-- ensure that each delivery rider is only delivering at most 1 order at a time
+
+
+-- FOODITEMS TRIGGER HERE
+-- ensure that availability changes when currentOrder reaches 0
+
+
+
 
 
 
