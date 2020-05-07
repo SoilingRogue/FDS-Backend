@@ -87,9 +87,24 @@ RETURNS INTEGER
 AS $$
 BEGIN
     RETURN (
-        SELECT uid
-        FROM DeliveryRiders
+        SELECT D.uid
+        FROM DeliveryRiders D
         WHERE deliveryStatus = 0
+        AND (
+            SELECT CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM PartTimers WHERE uid = D.uid)
+                THEN EXISTS (
+                    SELECT 1 FROM PTShift 
+                    WHERE uid = D.uid
+                    AND week = (SELECT ((DATE_PART('day', NOW())::integer - 1) / 7) + 1)
+                    AND day = (SELECT EXTRACT(DOW FROM NOW()) + 1)
+                    AND startTime <= (SELECT EXTRACT(HOUR FROM NOW()))
+                    AND endTime >= (SELECT EXTRACT(HOUR FROM NOW())))
+                ELSE EXISTS (
+                    SELECT 1 FROM FTShift WHERE uid = D.uid)
+                END
+            ) = TRUE
         LIMIT 1
     );
 END;
