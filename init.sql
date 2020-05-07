@@ -62,10 +62,6 @@ DROP TABLE IF EXISTS WWS
 CASCADE;
 DROP TABLE IF EXISTS MWS
 CASCADE;
-DROP TABLE IF EXISTS FullTimeScheduling
-CASCADE;
-DROP TABLE IF EXISTS DayCombinations
-CASCADE;
 
 -- NEW VERSION --
 -- Things to do:
@@ -348,27 +344,6 @@ CREATE TABLE FullTimers
 );
 
 -- Work schedule entities - part time, full time, days & shifts
--- Need to look thru MWS and WWS
-
-CREATE TABLE PTShift
-(
-    day INTEGER CHECK (day >= 1 AND DAY <= 7),
-    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
-    endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
-    uid INTEGER NOT NULL,
-    PRIMARY KEY (day, startTime, endTime, uid),
-    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
-);
-
-CREATE TABLE FTShift
-(
-    sId INTEGER,
-    start1 INTEGER NOT NULL CHECK (start1 >= 10 AND start1 <= 22 AND start1 < end1 AND start1 + 4 = end1),
-    end1 INTEGER NOT NULL CHECK (end1 >= 10 AND end1 <= 22 AND end1 < start2 AND end1 + 1 = start2),
-    start2 INTEGER NOT NULL CHECK (start2 >= 10 AND start2 <= 22 AND start2 < end2 AND start2 + 4 = end2),
-    end2 INTEGER NOT NULL CHECK (end2 >= 10 AND end2 <= 22),
-    PRIMARY KEY (sId)
-);
 
 CREATE TABLE WWS
 (
@@ -378,33 +353,35 @@ CREATE TABLE WWS
     FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
 );
 
+CREATE TABLE PTShift
+(
+    week INTEGER CHECK (week >= 1 AND week <= 4),
+    day INTEGER CHECK (day >= 1 AND day <= 7),
+    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
+    endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
+    uid INTEGER NOT NULL,
+    PRIMARY KEY (week, day, startTime, endTime, uid),
+    FOREIGN KEY (uid, week) REFERENCES WWS ON DELETE CASCADE,
+    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
+);
+
+CREATE TABLE FTShift
+(
+    sid INTEGER,
+    start1 INTEGER NOT NULL CHECK (start1 >= 10 AND start1 <= 22 AND start1 < end1 AND start1 + 4 = end1),
+    end1 INTEGER NOT NULL CHECK (end1 >= 10 AND end1 <= 22 AND end1 < start2 AND end1 + 1 = start2),
+    start2 INTEGER NOT NULL CHECK (start2 >= 10 AND start2 <= 22 AND start2 < end2 AND start2 + 4 = end2),
+    end2 INTEGER NOT NULL CHECK (end2 >= 10 AND end2 <= 22),
+    PRIMARY KEY (sId)
+);
+
 CREATE TABLE MWS
 (
     uid INTEGER NOT NULL,
     month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
-    startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
-    endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    PRIMARY KEY (uid, month),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
-);
-
--- remember to update this table when fttimescheduling is edited or vice versa
-CREATE TABLE DayCombinations
-(
-    startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
-    endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    uid INTEGER,
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
-);
-
--- remember to update this table when daycombinations is edited or vice versa
-CREATE TABLE FullTimeScheduling
-(
-    uid INTEGER,
+    sid INTEGER,
     day INTEGER CHECK (day >= 1 AND day <= 7),
-    shift INTEGER,
-    PRIMARY KEY (uid, day, shift),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE,
-    FOREIGN KEY (shift) REFERENCES FTShift
+    PRIMARY KEY (uid, month, day),
+    FOREIGN KEY (sid) REFERENCES FTShift,
+    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );
