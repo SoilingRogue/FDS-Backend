@@ -382,29 +382,9 @@ CREATE TABLE MWS
 (
     uid INTEGER NOT NULL,
     month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
-    startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
-    endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    PRIMARY KEY (uid, month),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
-);
-
--- remember to update this table when fttimescheduling is edited or vice versa
-CREATE TABLE DayCombinations
-(
-    startDay INTEGER CHECK (startDay >= 1 AND startDay <= 7),
-    endDay INTEGER CHECK (endDay >= 1 AND endDay <= 7),
-    uid INTEGER,
-    PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
-);
-
--- remember to update this table when daycombinations is edited or vice versa
-CREATE TABLE FullTimeScheduling
-(
-    uid INTEGER,
-    day INTEGER CHECK (day >= 1 AND day <= 7),
     shift INTEGER,
-    PRIMARY KEY (uid, day, shift),
-    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE,
-    FOREIGN KEY (shift) REFERENCES FTShift
+    day INTEGER (day >= 1 AND DAY <= 7),
+    PRIMARY KEY (uid, month, day ,shift),
+    FOREIGN KEY (shift) REFERENCES FTShift,
+    FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );
