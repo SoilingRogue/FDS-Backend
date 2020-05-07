@@ -32,6 +32,7 @@ BEGIN
             IF num < 5 THEN
                 RAISE exception 'Less than 5 full-time riders for % time', i;
             END IF;
+        END LOOP;
     ELSE
     -- event is delete update on WWS
         FOR i in 10 .. 22 LOOP
@@ -118,7 +119,7 @@ BEGIN
     SELECT COUNT(*) INTO num FROM MWS M WHERE M.uid = id AND M.month = mth;
     IF num <> 0 THEN
         IF num <> 5 THEN
-            RAISE exception;
+            RAISE exception 'Less than 5 works days!';
         ELSE
             SELECT * INTO first
             FROM
@@ -134,7 +135,7 @@ BEGIN
             LIMIT 1
             OFFSET 1;
             IF (ABS(first - second) <> 1 OR ABS(first - second) <> 6) THEN
-                RAISE exception;
+                RAISE exception 'Not 5 conseq work days!';
             END IF;
         END IF;
     END IF;
