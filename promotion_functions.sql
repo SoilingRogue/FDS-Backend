@@ -11,9 +11,9 @@ CREATE FUNCTION getValidPromotions(inputUid INTEGER, newFoodCost FLOAT, newDeliv
 RETURNS setof INTEGER
 AS $$
 DECLARE
-    time varchar(8);
+    time text;
 BEGIN
-    SELECT convert(varchar(8), NOW(), 120) INTO time;
+    SELECT convert(text, NOW(), 120) INTO time;
     RETURN QUERY 
     SELECT DISTINCT pid
     FROM FirstOrderPromotions, (SELECT * FROM Places WHERE uid = inputUid) AS F
@@ -22,14 +22,14 @@ BEGIN
     SELECT DISTINCT pid
     FROM DeliveryPromotions D
     WHERE newDeliveryCost >= baseAmount
-    AND time >= convert(varchar(8), D.startDate, 120)
-    AND time <= convert(varchar(8), D.endDate, 120)
+    AND time >= convert(text, D.startDate, 120)
+    AND time <= convert(text, D.endDate, 120)
     UNION
     SELECT DISTINCT pid
     FROM FirstOrderPromotions natural join HasPromotions natural join RestaurantPromotions
     WHERE restId = rid AND basePrice <= newFoodCost
-    AND time >= convert(varchar(8), startDate, 120)
-    AND time <= convert(varchar(8), endDate, 120);
+    AND time >= convert(text, startDate, 120)
+    AND time <= convert(text, endDate, 120);
 END;
 $$ LANGUAGE 'plpgsql';
 
