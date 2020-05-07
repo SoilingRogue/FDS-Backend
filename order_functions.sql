@@ -39,7 +39,7 @@ BEGIN
  RETURN QUERY (
     WITH completedOrders AS (
         SELECT oid, deliveryLocation, tOrderPlaced
-        FROM Orders natural join Delivers WHERE isCompleted = TRUE)
+        FROM Orders NATURAL JOIN Delivers WHERE isCompleted = TRUE)
     SELECT deliveryLocation
     FROM completedOrders NATURAL JOIN Places
     WHERE uid = inputUid
@@ -119,10 +119,10 @@ BEGIN
  -- Update places table
  INSERT INTO Places (uid, oid) VALUES (inputUid, newOid);
 
- -- Update stock and add to consists of
+ -- Update current order count and add to consists of
  FOREACH newFoodItem IN ARRAY foodItemsArr
  LOOP
- 	UPDATE FoodItems SET currentStock = (currentStock - newFoodItem.qty) 
+ 	UPDATE FoodItems SET currentOrders = (currentOrders - 1) 
  	WHERE (newFoodItem.rid, newFoodItem.foodName) = (rid, foodName);
     
     INSERT INTO ConsistsOf (oid, foodName, rid, quantity) VALUES (newOid, newFoodItem.foodName, newFoodItem.rid, newFoodItem.qty);

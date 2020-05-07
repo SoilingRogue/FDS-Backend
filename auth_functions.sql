@@ -57,9 +57,9 @@ BEGIN
 	
     SELECT addUser(newEmail, newPassword) INTO newUid;
 
-    RETURN QUERY INSERT INTO DeliveryRiders (uid, deliveryStatus, commission) 
-	VALUES (newUid, DEFAULT, DEFAULT)
-    RETURNING json_build_object('uid', uid, 'deliveryStatus', deliveryStatus, 'commission', commission);
+    RETURN QUERY INSERT INTO DeliveryRiders (uid, deliveryStatus) 
+	VALUES (newUid, DEFAULT)
+    RETURNING json_build_object('uid', uid, 'deliveryStatus', deliveryStatus);
 
 END;
 $$ LANGUAGE 'plpgsql';

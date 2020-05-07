@@ -33,6 +33,51 @@ const hasOngoingOrder = (req, res, db) => {
     })
 }
 
+const addReviewAndRating = (req, res, db) => {
+    const { uid, oid, rating, review } = req.body
+    console.log(`select addReviewAndRating(${uid}, ${oid}, ${rating}, ${review})`)
+    db.query(
+        `select addReviewAndRating(${uid}, ${oid}, ${rating}, '${review}')`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+
+const getRestaurantReviewsAndRatings = (req, res, db) => {
+    const { rid } = req.body
+    console.log(`select getRestaurantReviewsAndRatings(${rid})`)
+    db.query(
+        `select getRestaurantReviewsAndRatings(${rid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `${error}` })
+            }
+            else {
+                res.status(200).json(results.rows[0]['getrestaurantreviewsandratings'])
+            }
+    })
+}
+
+const getPastOrders = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select getPastOrders(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                console.log(results.rows[0]['getpastorders'])
+                res.status(200).json(results.rows[0]['getpastorders'])
+            }
+    })
+}
+
 const getRecentOrderLocations = (req, res, db) => {
     const { uid } = req.body
     db.query(
@@ -63,9 +108,8 @@ const placeOrder = async (req, res, db) => {
     } else {
         rewardPoints = 0
     }
-    console.log(rewardPoints)
     db.query(
-        `CALL placeOrder(${uid}, ARRAY[${serialisedOrder}], ${foodCost}::FLOAT, ${0.2 * foodCost}::FLOAT, ${1.2 * foodCost}::FLOAT, ${rewardPoints}::INTEGER, '${deliveryLocation}'::TEXT);`,
+        `CALL placeOrder(${uid}, ARRAY[${serialisedOrder}], ${foodCost}::FLOAT, ${(0.2 * foodCost).toFixed(2)}::FLOAT, ${(1.2 * foodCost).toFixed(2)}::FLOAT, ${rewardPoints}::INTEGER, '${deliveryLocation}'::TEXT);`,
         (error, results) => {
             if (error) {
                 console.log("ERROR:" + error)
@@ -77,9 +121,70 @@ const placeOrder = async (req, res, db) => {
     )
 }
 
+const setTDepartToRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDepartToRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+
+const setTArriveAtRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTArriveAtRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+const setTDepartFromRest = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDepartFromRest(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+const setTDeliverOrder = (req, res, db) => {
+    const { uid } = req.body
+    db.query(
+        `select setTDeliverOrder(${uid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `DB error: ${error}` })
+            }
+            else {
+                res.status(200).end()
+            }
+    })
+}
+
 module.exports = {
     checkValidOrder,
     placeOrder,
     getRecentOrderLocations,
-    hasOngoingOrder
+    hasOngoingOrder,
+    setTDepartToRest,
+    setTArriveAtRest,
+    setTDepartFromRest,
+    setTDeliverOrder,
+    getPastOrders,
+    addReviewAndRating,
+    getRestaurantReviewsAndRatings
 }

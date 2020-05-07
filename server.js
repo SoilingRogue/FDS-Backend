@@ -60,13 +60,25 @@ app.post('/change_password', (req, res) => auth.changePassword(req, res, db))
 app.post('/change_credit_card', (req, res) => auth.changeCreditCard(req, res, db))
 app.post('/delete_user', (req, res) => auth.deleteUser(req, res, db))
 
+// customer routes
+// Order
 app.post('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
 app.post('/get_recent_order_locations', (req, res) => order.getRecentOrderLocations(req, res, db))
 app.post('/place_order', (req, res) => order.placeOrder(req, res, db))
 app.post('/has_ongoing_order', (req, res) => order.hasOngoingOrder(req, res, db))
+app.post('/get_past_orders', (req, res) => order.getPastOrders(req, res, db))
+app.post('/add_review_and_rating', (req, res) => order.addReviewAndRating(req, res, db))
+app.post('/get_restaurant_reviews_and_ratings', (req, res) => order.getRestaurantReviewsAndRatings(req, res, db))
 
+// Food and Restaurants
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
+app.get('/get_restaurants', (req, res) => food.getRestaurants(req, res, db))
 
+// rider routes
+app.post('/set_t_depart_to_rest', (req, res) => order.setTDepartToRest(req, res, db))
+app.post('/set_t_arrive_at_rest', (req, res) => order.setTArriveAtRest(req, res, db))
+app.post('/set_t_depart_from_rest', (req, res) => order.setTDepartFromRest(req, res, db))
+app.post('/set_deliver_order', (req, res) => order.setTDeliverOrder(req, res, db))
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

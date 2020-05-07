@@ -7,15 +7,15 @@ insert into Restaurants(rName, minOrderCost) values('prata house', 10);
 insert into Restaurants(rName, minOrderCost) values('makcik shop', 5);
 insert into Restaurants(rName, minOrderCost) values('astons', 8);
 
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(1, 'chicken rice', 1, 100, 2, 4.5);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(7, 'steak', 1, 100, 55, 10.0);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(3, 'bubble tea', 0, 100, 0, 2.5);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(2, 'bak kut teh', 1, 40, 40, 3.5);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(5, 'prata', 1, 40, 20, 1.5);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(6, 'nasi lemak', 0, 40, 0, 3.5);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(4, 'nasi padang', 0, 50, 0, 3.8);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(4, 'nasi goreng', 1, 40, 40, 4.2);
-insert into FoodItems(rid, foodName, availability, dailyStock, currentStock, price) values(5, 'murtabak', 1, 30, 30, 3.6);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(1, 'chicken rice', 1, 100, 2, 4.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(7, 'steak', 1, 100, 55, 10.0);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(3, 'bubble tea', 0, 100, 0, 2.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(2, 'bak kut teh', 1, 40, 40, 3.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(5, 'prata', 1, 40, 20, 1.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(6, 'nasi lemak', 0, 40, 0, 3.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(4, 'nasi padang', 0, 50, 0, 3.8);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(4, 'nasi goreng', 1, 40, 40, 4.2);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(5, 'murtabak', 1, 30, 30, 3.6);
 
 insert into FoodCategories values('chinese');
 insert into FoodCategories values('western');
@@ -63,7 +63,7 @@ select null from addDeliveryRider('rider3@gmail.com', 'password'); -- uid 5
 
 -- CALL placeOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
 --     12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
--- Update stock (not shown)
+-- Update orders (not shown)
 
 -- Insert order into Orders and fooditems into ConsistsOf
 -- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
@@ -126,17 +126,17 @@ INSERT INTO Customers (uid, rewardPoints, creditCard) VALUES
 (13, 0, "fsfsfsfsffffsfff");
 
 -- init riders & respective schedules
-INSERt INTO DeliveryRiders (uid, deliveryStatus, commision) VALUES
-(0, 1, 1),
-(1, 1, 0.01),
-(2, 1, 9.99),
-(3, 0, 0),
-(4, 1, 0),
-(5, 1, 0),
-(6, 0, -3.99), -- test
-(7, 1, 0),
-(8, 1, -3.99), -- test
-(9, 1, 99999990);
+INSERt INTO DeliveryRiders (uid, deliveryStatus) VALUES
+(0, 1),
+(1, 1),
+(2, 1),
+(3, 0),
+(4, 1),
+(5, 1),
+(6, 0), -- test
+(7, 1),
+(8, 1), -- test
+(9, 1);
 
 -- how to enforce delivery rider belong to either partime XOR fulltime
 INSERT INTO PartTime (uid, weeklyBaseSalary) VALUES
