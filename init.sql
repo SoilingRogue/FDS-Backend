@@ -352,11 +352,13 @@ CREATE TABLE FullTimers
 
 CREATE TABLE PTShift
 (
+    week INTEGER CHECK (week >=1 AND WEEK <= 4),
     day INTEGER CHECK (day >= 1 AND DAY <= 7),
     startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
     endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
     uid INTEGER NOT NULL,
-    PRIMARY KEY (day, startTime, endTime, uid),
+    PRIMARY KEY (week, day, startTime, endTime, uid),
+    FOREIGN KEY (uid, week) REFERENCES WWS ON DELETE CASCADE
     FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
 );
 
