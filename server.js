@@ -28,6 +28,7 @@ const db = new Pool({
 const auth = require('./controllers/auth')
 const order = require('./controllers/order')
 const food = require('./controllers/food')
+const moreStats = require('./controllers/moreStats')
 
 // App
 const app = express()
@@ -79,6 +80,10 @@ app.post('/set_t_depart_to_rest', (req, res) => order.setTDepartToRest(req, res,
 app.post('/set_t_arrive_at_rest', (req, res) => order.setTArriveAtRest(req, res, db))
 app.post('/set_t_depart_from_rest', (req, res) => order.setTDepartFromRest(req, res, db))
 app.post('/set_deliver_order', (req, res) => order.setTDeliverOrder(req, res, db))
+
+// More Stats
+app.post('/get_rider_monthly_stats', (req, res) => moreStats.getRiderMonthlyStats(req, res, db))
+app.get('/get_delivery_location_stats', (req, res) => moreStats.getDeliveryLocationStats(req, res, db))
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {
