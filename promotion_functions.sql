@@ -6,8 +6,8 @@
 */
 
 DROP FUNCTION IF EXISTS getValidPromotions;
-CREATE FUNCTION getValidPromotions(inputUid INTEGER, foodItemsArr FoodItemQty[], newFoodCost FLOAT, 
-	newDeliveryCost FLOAT, newTotalCost FLOAT, restId INTEGER)
+CREATE FUNCTION getValidPromotions(inputUid INTEGER, newFoodCost FLOAT, newDeliveryCost FLOAT,
+    newTotalCost FLOAT, restId INTEGER)
 RETURNS setof INTEGER
 AS $$
 DECLARE
@@ -36,8 +36,8 @@ $$ LANGUAGE 'plpgsql';
 
 
 DROP FUNCTION IF EXISTS applyPromotion;
-CREATE FUNCTION applyPromotion(promoUid INTEGER, foodItemsArr FoodItemQty[], newFoodCost FLOAT, 
-	newDeliveryCost FLOAT, newTotalCost FLOAT)
+CREATE FUNCTION applyPromotion(promoUid INTEGER, newFoodCost FLOAT, newDeliveryCost FLOAT, 
+    newTotalCost FLOAT)
 RETURNS setof INTEGER
 AS $$
 BEGIN
