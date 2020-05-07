@@ -8,7 +8,6 @@ DECLARE
     i int;
     num int;
 BEGIN
--- look through all 
     FOR i in 10 .. 22 LOOP
         SELECT COUNT(*) INTO num
         FROM
@@ -64,8 +63,23 @@ CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
 
--- ensure each wws in mws is equivalent + 5 conseq work days
+-- ensure ftriders 5 conseq work days + only 1 shift per day
+DROP FUNCTION IF EXISTS fiveConseqWorkDaysConstraint;
+CREATE OR REPLACE FUNCTION fiveConseqWorkDaysConstraint() RETURNS TRIGGER AS $$
+DECLARE
+    id INTEGER;
+BEGIN
+    id = NEW.uid;
+    
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger ON FullTimeScheduling CASCADE;
+CREATE CONSTRAINT TRIGGER fiveConseqWorkDaysConstraint_trigger
+    AFTER UPDATE OR INSERT OR DELETE ON FullTimeScheduling
+    deferrable initially deferred
+    FOR EACH ROW EXECUTE FUNCTION fiveConseqWorkDaysConstraint();
 
 
 
