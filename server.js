@@ -82,7 +82,15 @@ app.post('/set_t_depart_from_rest', (req, res) => order.setTDepartFromRest(req, 
 app.post('/set_deliver_order', (req, res) => order.setTDeliverOrder(req, res, db))
 
 // Stats
-app.get('/get_total_Order', (req, res) => stats.getTotalOrder());
+
+//manager
+app.get('/get_total_order', (req, res) => stats.getTotalOrder(req, res, db));
+app.get('/get_total_cost', (req, res) => stats.getTotalCost(req, res, db));
+app.get('/get_total_customers', (req, res) => stats.getTotalCustomers(req, res, db));
+app.post('/get_monthly_order', (req, res) => stats.getMonthlyOrder(req, res, db));
+app.post('/get_monthly_cost', (req, res) => stats.getMonthlyCost(req, res, db));
+app.post('/get_monthly_customers', (req, res) => stats.getMonthlyCustomers(req, res, db));
+
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

@@ -17,24 +17,28 @@
 -- Get total number of orders
 DROP FUNCTION IF EXISTS getTotalOrder;
 CREATE FUNCTION getTotalOrder()
- RETURNS SETOF integer
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT count(*) FROM ORDERS;
+ RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+    SELECT count(5) FROM ORDERS
+ ) t;
 
 END;
 $$ LANGUAGE 'plpgsql';
 
 
--- Get total cost of all orders
+-- Get total cost of allD orders
 DROP FUNCTION IF EXISTS getTotalCost;
 CREATE FUNCTION getTotalCost()
- RETURNS SETOF integer
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT sum(totalCost) FROM ORDERS;
+ RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+    SELECT sum(totalCost) FROM ORDERS
+ ) t;
 
 END;
 $$ LANGUAGE 'plpgsql';
@@ -43,11 +47,13 @@ $$ LANGUAGE 'plpgsql';
 -- Get total number of customers
 DROP FUNCTION IF EXISTS getTotalCustomers;
 CREATE FUNCTION getTotalCustomers()
- RETURNS SETOF integer
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT count(*) FROM Customers;
+ RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+     SELECT count(*) FROM Customers
+  ) t;
 
 END;
 $$ LANGUAGE 'plpgsql';
@@ -56,13 +62,14 @@ $$ LANGUAGE 'plpgsql';
 -- Get total number of orders in a month
 DROP FUNCTION IF EXISTS getTotalMonthlyOrder;
 CREATE FUNCTION getTotalMonthlyOrder(month integer)
- RETURNS SETOF bigint
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT count(*) 
- FROM ORDERS O 
- WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month;
+  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+    SELECT count(*) FROM ORDERS O  
+    WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month 
+  ) t;
 
 END;
 $$ LANGUAGE 'plpgsql';
@@ -71,13 +78,14 @@ $$ LANGUAGE 'plpgsql';
 -- Get total cost of orders in a month
 DROP FUNCTION IF EXISTS getTotalMonthlyCost;
 CREATE FUNCTION getTotalMonthlyCost(month integer)
- RETURNS SETOF double precision
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT sum(totalCost) 
- FROM ORDERS O 
- WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month;
+ RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+    SELECT sum(totalCost) FROM ORDERS O 
+    WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month;
+ ) t;
 
 END;
 $$ LANGUAGE 'plpgsql';
@@ -86,14 +94,15 @@ $$ LANGUAGE 'plpgsql';
 -- Get total number of new customers in a month
 DROP FUNCTION IF EXISTS getTotalMonthlyNewCustomer;
 CREATE FUNCTION getTotalMonthlyNewCustomer(month integer)
- RETURNS SETOF bigint
+ RETURNS SETOF json
 AS $$
 BEGIN
 
- RETURN QUERY SELECT count(*) 
- FROM Customers C
- WHERE (SELECT EXTRACT(MONTH FROM C.created_at)) = month;
-
+ RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
+    SELECT count(*) FROM Customers C
+    WHERE (SELECT EXTRACT(MONTH FROM C.created_at)) = month;
+ ) t;
+ 
 END;
 $$ LANGUAGE 'plpgsql';
 
