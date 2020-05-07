@@ -39,7 +39,7 @@ BEGIN
  RETURN QUERY (
     WITH completedOrders AS (
         SELECT oid, deliveryLocation, tOrderPlaced
-        FROM Orders natural join Delivers WHERE isCompleted = TRUE)
+        FROM Orders NATURAL JOIN Delivers WHERE isCompleted = TRUE)
     SELECT deliveryLocation
     FROM completedOrders NATURAL JOIN Places
     WHERE uid = inputUid

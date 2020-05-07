@@ -5,7 +5,7 @@ const addCustomer = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json(results.rows[0]['addcustomer'])
@@ -18,7 +18,7 @@ const addDeliveryRider = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json(results.rows[0]['adddeliveryrider'])
@@ -31,7 +31,7 @@ const addRestaurantStaff = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json(results.rows[0]['addrestaurantstaff'])
@@ -44,7 +44,7 @@ const addFdsManager = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json(results.rows[0]['addfdsmanager'])
@@ -62,13 +62,13 @@ const validateEmail = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             if (results.rowCount > 0)
                 res.status(200).json(results.rows[0])
             else
-                res.status(400).json({ dbError: 'User Not Found' })
+                res.status(400).json({ error: 'User Not Found' })
         })
 }
 
@@ -83,13 +83,13 @@ const validatePassword = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             if (results.rowCount > 0)
                 res.status(200).json(results.rows[0])
             else
-                res.status(400).json({ dbError: `Validation failed` })
+                res.status(400).json({ error: `Validation failed` })
         })
 }
 
@@ -102,7 +102,7 @@ const changePassword = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json()
@@ -118,7 +118,7 @@ const changeCreditCard = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json()
@@ -133,7 +133,7 @@ const deleteUser = (req, res, db) => {
         (error, results) => {
             if (error) {
                 console.log(error)
-                res.status(400).json({ dbError: `DB error: ${error}` })
+                res.status(400).json({ error: `${error}` })
                 return
             }
             res.status(200).json()

@@ -48,6 +48,21 @@ const addReviewAndRating = (req, res, db) => {
     })
 }
 
+const getRestaurantReviewsAndRatings = (req, res, db) => {
+    const { rid } = req.body
+    console.log(`select getRestaurantReviewsAndRatings(${rid})`)
+    db.query(
+        `select getRestaurantReviewsAndRatings(${rid})`,
+        (error, results) => {
+            if (error) {
+                res.status(400).json({ error: `${error}` })
+            }
+            else {
+                res.status(200).json(results.rows[0]['getrestaurantreviewsandratings'])
+            }
+    })
+}
+
 const getPastOrders = (req, res, db) => {
     const { uid } = req.body
     db.query(
@@ -171,4 +186,5 @@ module.exports = {
     setTDeliverOrder,
     getPastOrders,
     addReviewAndRating,
+    getRestaurantReviewsAndRatings
 }
