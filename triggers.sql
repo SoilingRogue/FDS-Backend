@@ -104,13 +104,14 @@ CREATE OR REPLACE FUNCTION fiveConseqWorkDaysConstraint() RETURNS TRIGGER AS $$
 DECLARE
     id INTEGER;
 BEGIN
-    id = NEW.uid;
+    IF
+    END IF;
     
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger ON FullTimeScheduling CASCADE;
+DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger ON MWS CASCADE;
 CREATE CONSTRAINT TRIGGER fiveConseqWorkDaysConstraint_trigger
     AFTER UPDATE OR INSERT OR DELETE ON FullTimeScheduling
     deferrable initially deferred

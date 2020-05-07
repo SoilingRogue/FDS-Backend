@@ -385,7 +385,7 @@ CREATE TABLE MWS
     month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
     shift INTEGER,
     day INTEGER CHECK (day >= 1 AND day <= 7),
-    PRIMARY KEY (uid, month, day ,shift),
+    PRIMARY KEY (uid, month, day),
     FOREIGN KEY (shift) REFERENCES FTShift,
     FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );
