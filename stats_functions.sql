@@ -221,6 +221,38 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+-- Get rider's number of monthly hours works
+DROP FUNCTION IF EXISTS getRiderMonthlyHours;
+CREATE FUNCTION getRiderMonthlyHours(_month integer)
+ RETURNS TABLE(outputUid INTEGER, outputHours BIGINT)
+AS $$
+BEGIN
+
+ RETURN QUERY (
+    SELECT DR.uid, coalesce((
+        SELECT CASE
+            WHEN EXISTS (
+                SELECT 1 FROM PartTimers WHERE uid = DR.uid
+            )
+            THEN (
+                SELECT SUM(endTime - startTime)
+                FROM PTShift
+                GROUP BY uid
+                HAVING uid = DR.uid
+            )
+            ELSE (
+                SELECT SUM(end1 - start1 + end2 - start2)
+                FROM FTShift NATURAL JOIN MWS
+                WHERE _month = (SELECT EXTRACT(MONTH FROM NOW()))
+                GROUP BY uid
+                HAVING uid = DR.uid
+            )
+            END),0)
+    FROM DeliveryRiders DR
+ );
+
+END;
+$$ LANGUAGE 'plpgsql';
 
 -- Get rider monthly statistics
 DROP FUNCTION IF EXISTS getRiderMonthlyStats;
@@ -232,10 +264,11 @@ BEGIN
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
      WITH riderSalary AS (SELECT * FROM getRiderTotalOrdersAndSalary(month)),
      riderDeliveryTime AS (SELECT* FROM getAvgDeliveryTime(month)),
-     riderRatings as (SELECT * FROM getRiderRatings(month))
-     SELECT t1.outputUid as uid, t1.outputOrder as numOfOrders, t1.outputSalary as salary,
-     t1.outputAvgDeliveryTime as avgDeliveryTime, t1.outputNumOfRatings as numOfRatings, t1.outputAvgRatings as avgRating
-     FROM (riderSalary NATURAL JOIN riderDeliveryTime NATURAL JOIN riderRatings) t1
+     riderRatings AS (SELECT * FROM getRiderRatings(month)),
+     riderMonthlyHours AS (SELECT * FROM getRiderMonthlyHours(month))
+     SELECT t1.outputUid AS uid, t1.outputOrder AS numOfOrders, t1.outputHours AS numOfHours, t1.outputSalary AS salary,
+     t1.outputAvgDeliveryTime AS avgDeliveryTime, t1.outputNumOfRatings AS numOfRatings, t1.outputAvgRatings AS avgRating
+     FROM (riderMonthlyHours NATURAL JOIN riderSalary NATURAL JOIN riderDeliveryTime NATURAL JOIN riderRatings) t1
 ) t;
 
 END;

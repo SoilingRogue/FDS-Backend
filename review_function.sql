@@ -58,9 +58,9 @@ BEGIN
     SELECT rating, reviewTxt
         FROM (SELECT oid FROM completedOrders WHERE rid = inputRid) t NATURAL JOIN Rates NATURAL JOIN Reviews)) t;
 
--- EXCEPTION
---    WHEN OTHERS THEN
---     RAISE EXCEPTION 'Failed to add review and rating';
+EXCEPTION
+   WHEN OTHERS THEN
+    RAISE EXCEPTION 'Failed to add review and rating';
 END;
 $$ LANGUAGE 'plpgsql';
 

@@ -28,7 +28,11 @@ const db = new Pool({
 const auth = require('./controllers/auth')
 const order = require('./controllers/order')
 const food = require('./controllers/food')
+<<<<<<< HEAD
 const stats = require('./controllers/stats')
+=======
+const moreStats = require('./controllers/moreStats')
+>>>>>>> 81f4375eed8fc056ee139e01edc934c6353049b9
 
 // App
 const app = express()
@@ -90,6 +94,10 @@ app.get('/get_total_customers', (req, res) => stats.getTotalCustomers(req, res, 
 app.post('/get_monthly_order', (req, res) => stats.getMonthlyOrder(req, res, db));
 app.post('/get_monthly_cost', (req, res) => stats.getMonthlyCost(req, res, db));
 app.post('/get_monthly_customers', (req, res) => stats.getMonthlyCustomers(req, res, db));
+
+// More Stats
+app.post('/get_rider_monthly_stats', (req, res) => moreStats.getRiderMonthlyStats(req, res, db))
+app.get('/get_delivery_location_stats', (req, res) => moreStats.getDeliveryLocationStats(req, res, db))
 
 
 // App Server Connection

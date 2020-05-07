@@ -34,6 +34,29 @@ insert into BelongsTo values(4, 'nasi goreng', 'malay');
 insert into BelongsTo values(5, 'murtabak', 'indian');
 
 
+-- Promotions
+insert into Promotions values(1);
+insert into Promotions values(2);
+insert into Promotions values(3);
+insert into Promotions values(4);
+
+insert into FDSPromotions values(1);
+insert into FDSPromotions values(2);
+
+insert into FirstOrderPromotions values(1, 0.5);
+
+insert into DeliveryPromotions values(2, '2020-05-01', '2021-05-01', 1.0, 0.0);
+
+insert into RestaurantPromotions values(3, '2020-05-01', '2020-06-01');
+insert into RestaurantPromotions values(4, '2020-05-01', '2020-06-01');
+
+insert into PriceTimeOrderPromotions values(3, 0.1, 20.0);
+insert into PriceTimeOrderPromotions values(3, 0.2, 40.0);
+
+insert into HasPromotions values(1, 3);
+insert into HasPromotions values(2, 4);
+
+
 -- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (10, 1, 10.8, 2, 'angmokio blk 888');
 -- insert into ConsistsOf (oid, foodName, rid, quantity) values (1, 'chicken rice', 1, 1);
 
