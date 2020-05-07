@@ -2,12 +2,17 @@ DROP FUNCTION IF EXISTS fiveRidersHourlyIntervalConstraint
 CASCADE;
 DROP TRIGGER IF EXISTS FT_fiveRidersHourlyIntervalConstraint_trigger ON MWS
 CASCADE;
+DROP TRIGGER IF EXISTS PT_fiveRidersHourlyIntervalConstraint_trigger ON PTShift CASCADE;
 DROP FUNCTION IF EXISTS PTRidersWorkingConstraint
 CASCADE;
 DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger1 ON PTShift 
 CASCADE;
 DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger2 ON PTShift 
 CASCADE;
+DROP FUNCTION IF EXISTS fiveConseqWorkDaysConstraint;
+DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger1 ON MWS CASCADE;
+DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger2 ON MWS CASCADE;
+
 -- write triggers here
 
 -- USER TRIGGERS HERE
@@ -55,7 +60,6 @@ CREATE CONSTRAINT TRIGGER FT_fiveRidersHourlyIntervalConstraint_trigger
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION fiveRidersHourlyIntervalConstraint();
 
-DROP TRIGGER IF EXISTS PT_fiveRidersHourlyIntervalConstraint_trigger ON PTShift CASCADE;
 CREATE CONSTRAINT TRIGGER PT_fiveRidersHourlyIntervalConstraint_trigger
     AFTER UPDATE OR DELETE ON PTShift
     deferrable initially deferred
@@ -100,7 +104,6 @@ CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger2
     FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
 
 -- ensure ftriders 5 conseq work days
-DROP FUNCTION IF EXISTS fiveConseqWorkDaysConstraint;
 CREATE OR REPLACE FUNCTION fiveConseqWorkDaysConstraint() RETURNS TRIGGER AS $$
 DECLARE
     id INTEGER;
@@ -143,29 +146,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger1 ON MWS CASCADE;
 CREATE CONSTRAINT TRIGGER fiveConseqWorkDaysConstraint_trigger1
     AFTER UPDATE OR DELETE ON MWS
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION fiveConseqWorkDaysConstraint();
 
-DROP TRIGGER IF EXISTS fiveConseqWorkDaysConstraint_trigger2 ON MWS CASCADE;
 CREATE CONSTRAINT TRIGGER fiveConseqWorkDaysConstraint_trigger2
     AFTER UPDATE OR INSERT ON MWS
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION fiveConseqWorkDaysConstraint();
-
--- ensure that each delivery rider is only delivering at most 1 order at a time
-
-
--- FOODITEMS TRIGGER HERE
--- ensure that availability changes when currentOrder reaches 0
-
-
-
-
-
-
-
-
-
