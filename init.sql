@@ -367,7 +367,7 @@ CREATE TABLE PTShift
 
 CREATE TABLE FTShift
 (
-    sId INTEGER,
+    sid INTEGER,
     start1 INTEGER NOT NULL CHECK (start1 >= 10 AND start1 <= 22 AND start1 < end1 AND start1 + 4 = end1),
     end1 INTEGER NOT NULL CHECK (end1 >= 10 AND end1 <= 22 AND end1 < start2 AND end1 + 1 = start2),
     start2 INTEGER NOT NULL CHECK (start2 >= 10 AND start2 <= 22 AND start2 < end2 AND start2 + 4 = end2),
@@ -379,9 +379,9 @@ CREATE TABLE MWS
 (
     uid INTEGER NOT NULL,
     month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
-    shift INTEGER,
+    sid INTEGER,
     day INTEGER CHECK (day >= 1 AND day <= 7),
     PRIMARY KEY (uid, month, day),
-    FOREIGN KEY (shift) REFERENCES FTShift,
+    FOREIGN KEY (sid) REFERENCES FTShift,
     FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
 );

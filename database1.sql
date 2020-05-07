@@ -135,7 +135,7 @@ INSERT INTO FTShift(sId, start1, end1, start2, end2) VALUES
 (3, 12, 16, 17, 21),
 (4, 13, 17, 18, 22);
 
-INSERT INTO MWS(uid, month, shift, day) VALUES
+INSERT INTO MWS(uid, month, sid, day) VALUES
 (6, 5, 1, 1), -- First FullTimer for May, June
 (6, 5, 3, 2),
 (6, 5, 2, 3),
