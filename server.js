@@ -19,8 +19,8 @@ const { Pool } = require('pg')
 const db = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'fdsdb',
-    password: 'password',
+    database: 'fds',
+    password: 'learning',
     port: 5432,
 })
 
@@ -28,6 +28,7 @@ const db = new Pool({
 const auth = require('./controllers/auth')
 const order = require('./controllers/order')
 const food = require('./controllers/food')
+const stats = require('./controllers/stats')
 
 // App
 const app = express()
@@ -77,6 +78,9 @@ app.post('/set_t_depart_to_rest', (req, res) => order.setTDepartToRest(req, res,
 app.post('/set_t_arrive_at_rest', (req, res) => order.setTArriveAtRest(req, res, db))
 app.post('/set_t_depart_from_rest', (req, res) => order.setTDepartFromRest(req, res, db))
 app.post('/set_deliver_order', (req, res) => order.setTDeliverOrder(req, res, db))
+
+// Stats
+app.get('/get_total_Order', (req, res) => stats.getTotalOrder());
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {
