@@ -228,7 +228,7 @@ CREATE TABLE Reviews
     uid INTEGER NOT NULL,
     oid INTEGER NOT NULL,
     reviewTxt VARCHAR(100) NOT NULL,
-    PRIMARY KEY (uid, oid),
+    PRIMARY KEY (oid),
     FOREIGN KEY (uid) REFERENCES Customers,
     FOREIGN KEY (oid) REFERENCES Orders
 );
@@ -239,7 +239,7 @@ CREATE TABLE Rates
     drid INTEGER NOT NULL,
     oid INTEGER NOT NULL,
     rating INTEGER NOT NULL CHECK (rating >= 0 AND rating <= 5),
-    PRIMARY KEY (uid, oid),
+    PRIMARY KEY (oid),
     FOREIGN KEY (uid) REFERENCES Customers,
     FOREIGN KEY (drid) REFERENCES DeliveryRiders(uid),
     FOREIGN KEY (oid) REFERENCES Delivers

@@ -110,8 +110,6 @@ DECLARE
  riderId INTEGER;
 BEGIN
 
- -- Check if food cost >= minOrderCost of restaurant 
-
  -- Insert into Order
  INSERT INTO Orders (foodCost, deliveryCost, totalCost, pointsUsed, ordered_at, deliveryLocation)
  VALUES (newFoodCost, newDeliveryCost, newTotalCost, newPointsUsed, DEFAULT, newDeliveryLocation)

@@ -61,10 +61,15 @@ app.post('/change_credit_card', (req, res) => auth.changeCreditCard(req, res, db
 app.post('/delete_user', (req, res) => auth.deleteUser(req, res, db))
 
 // customer routes
+// Order
 app.post('/check_valid_order', (req, res) => order.checkValidOrder(req, res, db))
 app.post('/get_recent_order_locations', (req, res) => order.getRecentOrderLocations(req, res, db))
 app.post('/place_order', (req, res) => order.placeOrder(req, res, db))
 app.post('/has_ongoing_order', (req, res) => order.hasOngoingOrder(req, res, db))
+app.post('/get_past_orders', (req, res) => order.getPastOrders(req, res, db))
+app.post('/add_review_and_rating', (req, res) => order.addReviewAndRating(req, res, db))
+
+// Food
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
 
 // rider routes
