@@ -58,34 +58,6 @@ select null from addDeliveryRider('rider1@gmail.com', 'password'); -- uid 3
 select null from addDeliveryRider('rider2@gmail.com', 'password'); -- uid 4
 select null from addDeliveryRider('rider3@gmail.com', 'password'); -- uid 5
 
--- CALL placeOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
---     12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
-
--- CALL placeOrder(1, ARRAY[(5, 'prata', 1)::FoodItemQty, (5, 'murtabak', 2)::FoodItemQty],
---     12::FLOAT, 1.5::FLOAT, 13.3::FLOAT, 2::INTEGER, 'angmokio blk 388'::TEXT);
--- Update orders (not shown)
-
--- Insert order into Orders and fooditems into ConsistsOf
--- insert into Orders (foodCost, deliveryCost, totalCost, pointsUsed, deliveryLocation) values (12, 1.5, 13.3, 2, 'angmokio blk 388');
--- insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'prata', 5, 1);
--- insert into ConsistsOf (oid, foodName, rid, quantity) values (2, 'murtabak', 5, 2);
-
--- Insert order into Places 
--- insert into Places (uid, oid) values (1, 1);
-
--- Add reward points to User
--- update Customers set rewardPoints = rewardPoints + 1 where uid = 1;
-
--- Assign delivery rider 
--- insert into Delivers (uid, oid, tOrderPlaced) values (2, 1, DEFAULT);
-
--- Simulate delivery
--- update Delivers set tDepartToRest = now() where oid = 1;
--- update Delivers set tArriveAtRest = now() where oid = 1;
--- update Delivers set tDepartFromRest = now() where oid = 1;
--- update Delivers set tDeliverOrder = now() where oid = 1;
--- Completed Delivery (Can be identified by tDeliverOrder not null)
-
 -- not used since promotable is not fully completed
 INSERT INTO Promotions (pid, startDate, endDate) VALUES
 (0, 2020-03-24, 2020-03-27), -- ended

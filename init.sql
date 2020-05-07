@@ -348,17 +348,24 @@ CREATE TABLE FullTimers
 );
 
 -- Work schedule entities - part time, full time, days & shifts
--- Need to look thru MWS and WWS
+
+CREATE TABLE WWS
+(
+    uid INTEGER NOT NULL,
+    week INTEGER NOT NULL,
+    PRIMARY KEY (uid, week),
+    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
+);
 
 CREATE TABLE PTShift
 (
-    week INTEGER CHECK (week >=1 AND WEEK <= 4),
-    day INTEGER CHECK (day >= 1 AND DAY <= 7),
+    week INTEGER CHECK (week >= 1 AND week <= 4),
+    day INTEGER CHECK (day >= 1 AND day <= 7),
     startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
     endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
     uid INTEGER NOT NULL,
     PRIMARY KEY (week, day, startTime, endTime, uid),
-    FOREIGN KEY (uid, week) REFERENCES WWS ON DELETE CASCADE
+    FOREIGN KEY (uid, week) REFERENCES WWS ON DELETE CASCADE,
     FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
 );
 
@@ -372,20 +379,12 @@ CREATE TABLE FTShift
     PRIMARY KEY (sId)
 );
 
-CREATE TABLE WWS
-(
-    uid INTEGER NOT NULL,
-    week INTEGER NOT NULL,
-    PRIMARY KEY (uid, week),
-    FOREIGN KEY (uid) REFERENCES PartTimers ON DELETE CASCADE
-);
-
 CREATE TABLE MWS
 (
     uid INTEGER NOT NULL,
     month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
     shift INTEGER,
-    day INTEGER (day >= 1 AND DAY <= 7),
+    day INTEGER CHECK (day >= 1 AND day <= 7),
     PRIMARY KEY (uid, month, day ,shift),
     FOREIGN KEY (shift) REFERENCES FTShift,
     FOREIGN KEY (uid) REFERENCES FullTimers ON DELETE CASCADE
