@@ -3,9 +3,11 @@
 * Functions:
 * getPastOrders(uid): Get past orders information
 * addReviewAndRating(uid, oid, rating, review): Record a review and rating
+* getRestaurantReviewsAndRatings(rid): Get a restaurant's review and rating
 
 * Helper Function:
 * getOrderRestName(oid): Get the restaurant name serving the order
+* getOrderRestId(oid): Get the restaurant id serving the order
 * getOrderRating(oid): Get the rating for an order
 * getOrderReview(oid): Get the review for an order
 */
@@ -44,7 +46,41 @@ EXCEPTION
 END;
 $$ LANGUAGE 'plpgsql';
 
--- Get the restaurant serving the order
+-- Get past orders
+DROP FUNCTION IF EXISTS getRestaurantReviewsAndRatings;
+CREATE FUNCTION getRestaurantReviewsAndRatings(inputRid INTEGER)
+ RETURNS SETOF JSON
+AS $$
+BEGIN
+    RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM ((WITH completedOrders AS (
+        SELECT oid, (SELECT getOrderRestId(oid)) as rid
+        FROM Orders NATURAL JOIN Delivers WHERE isCompleted = TRUE)
+    SELECT rating, reviewTxt
+        FROM (SELECT oid FROM completedOrders WHERE rid = inputRid) t NATURAL JOIN Rates NATURAL JOIN Reviews)) t;
+
+-- EXCEPTION
+--    WHEN OTHERS THEN
+--     RAISE EXCEPTION 'Failed to add review and rating';
+END;
+$$ LANGUAGE 'plpgsql';
+
+-- Get the rid serving the order
+DROP FUNCTION IF EXISTS getOrderRestId;
+CREATE FUNCTION getOrderRestId(inputOid INTEGER)
+ RETURNS INTEGER
+AS $$
+BEGIN
+ 
+ RETURN (
+     WITH temp AS (SELECT t.rname, t.rid, t.foodName FROM (Restaurants NATURAL JOIN FoodItems) t)
+     SELECT t.rid as rid
+     FROM (temp NATURAL JOIN ConsistsOf) t
+     WHERE t.oid = inputOid
+     LIMIT 1);
+END;
+$$ LANGUAGE 'plpgsql';
+
+-- Get the restaurant name serving the order
 DROP FUNCTION IF EXISTS getOrderRestName;
 CREATE FUNCTION getOrderRestName(inputOid INTEGER)
  RETURNS VARCHAR(50)
@@ -53,7 +89,7 @@ BEGIN
  
  RETURN (
      WITH temp AS (SELECT t.rname, t.rid, t.foodName FROM (Restaurants NATURAL JOIN FoodItems) t)
-     SELECT t.rname
+     SELECT t.rname as rname
      FROM (temp NATURAL JOIN ConsistsOf) t
      WHERE t.oid = inputOid
      LIMIT 1);

@@ -69,9 +69,11 @@ app.post('/place_order', (req, res) => order.placeOrder(req, res, db))
 app.post('/has_ongoing_order', (req, res) => order.hasOngoingOrder(req, res, db))
 app.post('/get_past_orders', (req, res) => order.getPastOrders(req, res, db))
 app.post('/add_review_and_rating', (req, res) => order.addReviewAndRating(req, res, db))
+app.post('/get_restaurant_reviews_and_ratings', (req, res) => order.getRestaurantReviewsAndRatings(req, res, db))
 
-// Food
+// Food and Restaurants
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
+app.get('/get_restaurants', (req, res) => food.getRestaurants(req, res, db))
 
 // rider routes
 app.post('/set_t_depart_to_rest', (req, res) => order.setTDepartToRest(req, res, db))
