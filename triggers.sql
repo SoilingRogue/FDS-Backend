@@ -1,10 +1,12 @@
 DROP FUNCTION IF EXISTS fiveRidersHourlyIntervalConstraint
 CASCADE;
-DROP TRIGGER IF EXISTS FT_fiveRidersHourlyIntervalConstraint_trigger ON FullTimeScheduling 
+DROP TRIGGER IF EXISTS FT_fiveRidersHourlyIntervalConstraint_trigger ON MWS
 CASCADE;
 DROP FUNCTION IF EXISTS PTRidersWorkingConstraint
 CASCADE;
-DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger ON PTShift 
+DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger1 ON PTShift 
+CASCADE;
+DROP TRIGGER IF EXISTS PTRidersWorkingConstraint_trigger2 ON PTShift 
 CASCADE;
 -- write triggers here
 
@@ -62,14 +64,23 @@ CREATE CONSTRAINT TRIGGER PT_fiveRidersHourlyIntervalConstraint_trigger
 CREATE OR REPLACE FUNCTION  PTRidersWorkingConstraint() RETURNS TRIGGER AS $$
 DECLARE
     id INTEGER;
+    week INTEGER;
     time INTEGER;
 BEGIN
-    id = NEW.uid;
+    IF NEW ISNULL THEN
+    -- delete op
+        id = OLD.uid;
+        week = OLD.week;
+    ELSE 
+    -- insert op
+        id = NEW.uid;
+        week = NEW.week;
+    END IF;
     SELECT SUM(*) INTO time
     FROM 
-    (SELECT endTime - startTime as shiftTime FROM PTShift
-    WHERE uid = id) AS temp;
-    IF time < 10 or time > 48 THEN
+    (SELECT endTime - startTime as shiftTime FROM PTShift P
+    WHERE P.uid = id AND P.week = week) AS temp;
+    IF (time < 10 AND TIME <> 0) OR time > 48 THEN
         RAISE exception 'Invalid working hours for rider id: %', id;
     END IF;
     RETURN NULL;
@@ -77,8 +88,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger
-    AFTER UPDATE OF day, startTime, endTime OR INSERT OR DELETE ON PTShift
+CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger1
+    AFTER UPDATE OR DELETE ON PTShift
+    deferrable initially deferred
+    FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
+
+CREATE CONSTRAINT TRIGGER PTRidersWorkingConstraint_trigger2
+    AFTER UPDATE OR INSERT ON PTShift
     deferrable initially deferred
     FOR EACH ROW EXECUTE FUNCTION PTRidersWorkingConstraint();
 
