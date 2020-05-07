@@ -1,14 +1,26 @@
-------------------------- Food Functionalities -----------------------------
+------------------------- Promotion Functionalities -----------------------------
 /*
 * Functions:
-* getFoodData(): Get food data information
-* getRestaurants(): Get restaurants
+* getFoodData(): Get promotions the order can receive
+* getRestaurants(): Use actual promotion
 */
+
+DROP FUNCTION IF EXISTS getValidPromotions;
+CREATE FUNCTION getValidPromotions(inputUid INTEGER)
+RETURNS setof INTEGER
+AS $$
+BEGIN
+    RETURN QUERY SELECT ;
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+
 
 -- Get Food Data
 DROP FUNCTION IF EXISTS getFoodData;
 CREATE FUNCTION getFoodData()
- RETURNS setof json
+RETURNS setof json
 AS $$
 BEGIN
  
