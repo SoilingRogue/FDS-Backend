@@ -95,14 +95,23 @@ BEGIN
                 WHEN EXISTS (
                     SELECT 1 FROM PartTimers WHERE uid = D.uid)
                 THEN EXISTS (
-                    SELECT 1 FROM PTShift 
+                    SELECT 1
+                    FROM PTShift 
                     WHERE uid = D.uid
                     AND week = (SELECT ((DATE_PART('day', NOW())::integer - 1) / 7) + 1)
                     AND day = (SELECT EXTRACT(DOW FROM NOW()) + 1)
                     AND startTime <= (SELECT EXTRACT(HOUR FROM NOW()))
                     AND endTime >= (SELECT EXTRACT(HOUR FROM NOW())))
                 ELSE EXISTS (
-                    SELECT 1 FROM FTShift WHERE uid = D.uid)
+                    SELECT 1
+                    FROM FTShift NATURAL JOIN MWS
+                    WHERE uid = D.uid
+                    AND month = (SELECT EXTRACT(MONTH FROM NOW()))
+                    AND day = (SELECT EXTRACT(DOW FROM NOW()) + 1)
+                    AND (
+                        (start1 <= (SELECT EXTRACT(HOUR FROM NOW())) AND end1 <= (SELECT EXTRACT(HOUR FROM NOW())))
+                        OR (start2 <= (SELECT EXTRACT(HOUR FROM NOW())) AND end2 <= (SELECT EXTRACT(HOUR FROM NOW())))
+                    ))
                 END
             ) = TRUE
         LIMIT 1
