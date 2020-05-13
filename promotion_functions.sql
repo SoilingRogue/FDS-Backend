@@ -1,13 +1,12 @@
 ------------------------- Promotion Functionalities -----------------------------
 /*
 * Functions:
-* getFoodData(): Get promotions the order can receive
-* getRestaurants(): Apply actual promotion
+* getValidPromotions(): Get promotions the order can receive
+* applyPromotion(): Apply actual promotion
 */
 
 DROP FUNCTION IF EXISTS getValidPromotions;
-CREATE FUNCTION getValidPromotions(inputUid INTEGER, newFoodCost FLOAT, newDeliveryCost FLOAT,
-    newTotalCost FLOAT, restId INTEGER)
+CREATE FUNCTION getValidPromotions(inputUid INTEGER, newFoodCost FLOAT, restId INTEGER)
 RETURNS setof INTEGER
 AS $$
 DECLARE
@@ -21,7 +20,7 @@ BEGIN
     UNION
     SELECT DISTINCT pid
     FROM DeliveryPromotions D
-    WHERE newDeliveryCost >= baseAmount
+    WHERE 0.20 * newFoodCost >= baseAmount
     AND time >= D.startDate
     AND time <= D.endDate
     UNION

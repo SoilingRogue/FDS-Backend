@@ -1,5 +1,5 @@
 const checkValidOrder = (req, res, db) => {
-    const { currentOrder } = req.body
+    const { uid, currentOrder } = req.body
     const totalCost = currentOrder.reduce((total, foodItem) => total + (foodItem.qty * foodItem.price), 0).toFixed(2)
     if (currentOrder.filter(x => x.rid !== currentOrder[0].rid).length > 0)
         res.status(400).json({ error: 'Cannot order from multiple restaurants' })
@@ -13,8 +13,19 @@ const checkValidOrder = (req, res, db) => {
                 else if (results.rows[0]['getrestaurantmincost'] > totalCost) {
                     res.status(400).json({ error: 'Does not meet minimum order cost'})
                 }
-                else
-                    res.status(200).end()
+                else {
+                    db.query(
+                        `select getValidPromotions(${uid}, ${totalCost}, ${currentOrder[0].rid})`,
+                        (error, results) => {
+                            if (error) {
+                                res.status(400).json({ error: `DB error: ${error}` })
+                            }
+                            else {
+                                res.status(200).json(results.rows.map(x => x['getvalidpromotions']))
+                            }
+                        }
+                    )
+                }
             })
     }
 }
@@ -35,7 +46,6 @@ const hasOngoingOrder = (req, res, db) => {
 
 const addReviewAndRating = (req, res, db) => {
     const { uid, oid, rating, review } = req.body
-    console.log(`select addReviewAndRating(${uid}, ${oid}, ${rating}, ${review})`)
     db.query(
         `select addReviewAndRating(${uid}, ${oid}, ${rating}, '${review}')`,
         (error, results) => {
@@ -50,7 +60,6 @@ const addReviewAndRating = (req, res, db) => {
 
 const getRestaurantReviewsAndRatings = (req, res, db) => {
     const { rid } = req.body
-    console.log(`select getRestaurantReviewsAndRatings(${rid})`)
     db.query(
         `select getRestaurantReviewsAndRatings(${rid})`,
         (error, results) => {
