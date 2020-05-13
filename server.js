@@ -19,8 +19,8 @@ const { Pool } = require('pg')
 const db = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'fdsdb',
-    password: 'password',
+    database: 'fds',
+    password: 'learning',
     port: 5432,
 })
 
@@ -83,6 +83,9 @@ app.post('/set_t_depart_from_rest', (req, res) => order.setTDepartFromRest(req, 
 app.post('/set_deliver_order', (req, res) => order.setTDeliverOrder(req, res, db))
 
 // Stats
+
+// rider
+app.get('/get_rider_monthly_stats', (req, res) => stats.getRiderMonthlyStats(req, res, db));
 
 //manager
 app.get('/get_total_order', (req, res) => stats.getTotalOrder(req, res, db));

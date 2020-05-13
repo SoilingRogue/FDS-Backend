@@ -5,8 +5,8 @@ const getTotalOrder = (req, res, db) => {
       res.status(400).json({ error: `${error}` });
       return;
     }
-    console.log("res: " + results.rows[0]["gettotalorder"]["count"])
-    console.log("res2: " + results)
+    console.log("res: " + results.rows[0]["gettotalorder"]["count"]);
+    console.log("res2: " + results);
     res.status(200).json(results.rows[0]["gettotalorder"]["count"]);
   });
 };
@@ -59,19 +59,27 @@ const getMonthlyCost = (req, res, db) => {
 
 const getMonthlyCustomers = (req, res, db) => {
   const month = req.body();
-  db.query(
-    `select getTotalMonthlyNewCustomer($(month))`,
+  db.query(`select getTotalMonthlyNewCustomer($(month))`, (error, results) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: `${error}` });
+      return;
+    }
+    res
+      .status(200)
+      .json(results.rows[0]["gettotalmonthlynewcustomer"][0]["count"]);
+  });
+};
+
+const getRiderMonthlyStats = (req, res, db) => {
+  db.query(`select getRiderMonthlyStats(4)`,
     (error, results) => {
       if (error) {
         console.log(error);
         res.status(400).json({ error: `${error}` });
-        return;
       }
-      res
-        .status(200)
-        .json(results.rows[0]["gettotalmonthlynewcustomer"][0]["count"]);
-    }
-  );
+      res.status(200).json(results.rows[0]["getridermonthlystats"]);
+    });
 };
 
 module.exports = {
@@ -81,4 +89,5 @@ module.exports = {
   getMonthlyOrder,
   getMonthlyCost,
   getMonthlyCustomers,
+  getRiderMonthlyStats,
 };
