@@ -44,7 +44,7 @@ BEGIN
             SELECT COUNT(*) INTO num
             FROM
             (SELECT uid
-            FROM PTShift
+            FROM PTShift P
             WHERE week = OLD.week AND P.day = NEW.day AND p.startTime <= i AND p.endTime >= i) AS PTWORKERS;
             IF num < 5 THEN
                 RAISE exception 'Less than 5 part-time riders for % time', i;
@@ -81,7 +81,7 @@ BEGIN
         id = NEW.uid;
         wk = NEW.week;
     END IF;
-    SELECT SUM(*) INTO time
+    SELECT SUM(shiftTime) INTO time
     FROM 
     (SELECT endTime - startTime as shiftTime FROM PTShift P
     WHERE P.uid = id AND P.week = wk) AS temp;
@@ -128,13 +128,13 @@ BEGIN
             FROM
             (SELECT * FROM (VALUES (1), (2), (3), (4), (5), (6), (7)) t1(day)
             EXCEPT
-            SELECT day FROM MWS WHERE M.uid = id AND M.month = mth) as temp
+            SELECT day FROM MWS WHERE uid = id AND month = mth) as temp
             Limit 1;
             SELECT * INTO second
             FROM
             (SELECT * FROM (VALUES (1), (2), (3), (4), (5), (6), (7)) t1(day)
             EXCEPT
-            SELECT day FROM MWS WHERE M.uid = id AND M.month = mth) as temp
+            SELECT day FROM MWS WHERE uid = id AND month = mth) as temp
             LIMIT 1
             OFFSET 1;
             IF (ABS(first - second) <> 1 OR ABS(first - second) <> 6) THEN
