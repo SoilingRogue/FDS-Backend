@@ -34,7 +34,7 @@ const getTotalCustomers = (req, res, db) => {
 };
 
 const getMonthlyOrder = (req, res, db) => {
-  const month = req.body();
+  const { month } = req.body();
   db.query(`select getTotalMonthlyOrder(${month})`, (error, results) => {
     if (error) {
       console.log(error);
@@ -46,8 +46,8 @@ const getMonthlyOrder = (req, res, db) => {
 };
 
 const getMonthlyCost = (req, res, db) => {
-  const month = req.body();
-  db.query(`select getTotalMonthlyCost($(month))`, (error, results) => {
+  const { month } = req.body();
+  db.query(`select getTotalMonthlyCost(${month})`, (error, results) => {
     if (error) {
       console.log(error);
       res.status(400).json({ error: `${error}` });
@@ -58,8 +58,8 @@ const getMonthlyCost = (req, res, db) => {
 };
 
 const getMonthlyCustomers = (req, res, db) => {
-  const month = req.body();
-  db.query(`select getTotalMonthlyNewCustomer($(month))`, (error, results) => {
+  const { month } = req.body();
+  db.query(`select getTotalMonthlyNewCustomer(${month})`, (error, results) => {
     if (error) {
       console.log(error);
       res.status(400).json({ error: `${error}` });
