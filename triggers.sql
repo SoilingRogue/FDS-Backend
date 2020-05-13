@@ -26,7 +26,7 @@ DECLARE
     i int;
     num int;
 BEGIN
-    IF (TG_TABLE_NAME = 'MWS') THEN
+    IF (TG_TABLE_NAME = 'mws') THEN
     -- event is delete update on MWS
         FOR i in 10 .. 22 LOOP
             SELECT COUNT(*) INTO num
