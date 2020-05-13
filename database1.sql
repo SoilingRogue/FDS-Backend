@@ -51,7 +51,7 @@ insert into RestaurantPromotions values(3, '2020-05-01', '2020-06-01');
 insert into RestaurantPromotions values(4, '2020-05-01', '2020-06-01');
 
 insert into PriceTimeOrderPromotions values(3, 0.1, 20.0);
-insert into PriceTimeOrderPromotions values(3, 0.2, 40.0);
+insert into PriceTimeOrderPromotions values(4, 0.2, 40.0);
 
 insert into HasPromotions values(1, 3);
 insert into HasPromotions values(2, 4);
