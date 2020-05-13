@@ -19,8 +19,8 @@ const { Pool } = require('pg')
 const db = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'fds',
-    password: 'learning',
+    database: 'fdsdb',
+    password: 'password',
     port: 5432,
 })
 
@@ -28,11 +28,8 @@ const db = new Pool({
 const auth = require('./controllers/auth')
 const order = require('./controllers/order')
 const food = require('./controllers/food')
-<<<<<<< HEAD
 const stats = require('./controllers/stats')
-=======
 const moreStats = require('./controllers/moreStats')
->>>>>>> 81f4375eed8fc056ee139e01edc934c6353049b9
 
 // App
 const app = express()
