@@ -22,16 +22,12 @@ BEGIN
     SELECT DISTINCT pid
     FROM DeliveryPromotions D
     WHERE newDeliveryCost >= baseAmount
-    -- AND time >= select convert(text, D.startDate, 120)
-    -- AND time <= select convert(text, D.endDate, 120)
     AND time >= D.startDate
     AND time <= D.endDate
     UNION
     SELECT DISTINCT pid
     FROM PriceTimeOrderPromotions natural join HasPromotions natural join RestaurantPromotions
     WHERE restId = rid AND basePrice <= newFoodCost
-    -- AND time >= select convert(text, startDate, 120)
-    -- AND time <= select convert(text, endDate, 120);
     AND time >= startDate
     AND time <= endDate;
 END;
