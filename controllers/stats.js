@@ -5,6 +5,8 @@ const getTotalOrder = (req, res, db) => {
       res.status(400).json({ error: `${error}` });
       return;
     }
+    console.log("res: " + results.rows[0]["gettotalorder"]["count"])
+    console.log("res2: " + results)
     res.status(200).json(results.rows[0]["gettotalorder"]["count"]);
   });
 };

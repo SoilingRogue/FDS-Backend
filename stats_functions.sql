@@ -22,7 +22,7 @@ AS $$
 BEGIN
 
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
-    SELECT count(5) FROM ORDERS
+    SELECT count(*) FROM ORDERS
  ) t;
 
 END;
@@ -84,7 +84,7 @@ BEGIN
 
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
     SELECT sum(totalCost) FROM ORDERS O 
-    WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month;
+    WHERE (SELECT EXTRACT(MONTH FROM O.ordered_at)) = month
  ) t;
 
 END;
@@ -100,7 +100,7 @@ BEGIN
 
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
     SELECT count(*) FROM Customers C
-    WHERE (SELECT EXTRACT(MONTH FROM C.created_at)) = month;
+    WHERE (SELECT EXTRACT(MONTH FROM C.created_at)) = month
  ) t;
  
 END;
