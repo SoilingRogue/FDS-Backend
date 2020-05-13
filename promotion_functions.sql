@@ -22,14 +22,14 @@ BEGIN
     SELECT DISTINCT pid
     FROM DeliveryPromotions D
     WHERE newDeliveryCost >= baseAmount
-    AND time >= convert(text, D.startDate, 120)
-    AND time <= convert(text, D.endDate, 120)
+    AND time >= select convert(text, D.startDate, 120)
+    AND time <= select convert(text, D.endDate, 120)
     UNION
     SELECT DISTINCT pid
     FROM FirstOrderPromotions natural join HasPromotions natural join RestaurantPromotions
     WHERE restId = rid AND basePrice <= newFoodCost
-    AND time >= convert(text, startDate, 120)
-    AND time <= convert(text, endDate, 120);
+    AND time >= select convert(text, startDate, 120)
+    AND time <= select convert(text, endDate, 120);
 END;
 $$ LANGUAGE 'plpgsql';
 
