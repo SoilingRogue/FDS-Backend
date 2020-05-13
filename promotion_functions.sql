@@ -36,7 +36,7 @@ $$ LANGUAGE 'plpgsql';
 DROP FUNCTION IF EXISTS applyPromotion;
 CREATE FUNCTION applyPromotion(promoUid INTEGER, newFoodCost FLOAT, newDeliveryCost FLOAT, 
     newTotalCost FLOAT)
-RETURNS INTEGER
+RETURNS FLOAT
 AS $$
 DECLARE
     finalFoodCost FLOAT;
