@@ -48,13 +48,13 @@ const getMonthlyStats = (req, res, db) => {
 };
 
 const getThisMonthStats = (req, res, db) => {
-  db.query(`select getMonthlyStats(4)`, (error, results) => {
+  db.query(`select getMonthlyStats(5)`, (error, results) => {
     if (error) {
       console.log(error);
       res.status(400).json({ error: `${error}` });
       return;
     }
-    res.status(200).json(results);
+    res.status(200).json(results.rows[0]["getmonthlystats"][0]);
   });
 };
 
@@ -68,6 +68,16 @@ const getRiderMonthlyStats = (req, res, db) => {
   });
 };
 
+const getRestaurantFoodData = (req, res, db) => {
+  db.query(`select getRestaurantFoodData(8)`, (error, results) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: `${error}` });
+    }
+    res.status(200).json(results);
+  })
+}
+
 
 module.exports = {
   getTotalOrder,
@@ -76,4 +86,5 @@ module.exports = {
   getMonthlyStats,
   getThisMonthStats,
   getRiderMonthlyStats,
+  getRestaurantFoodData
 };

@@ -263,7 +263,7 @@ BEGIN
 
  RETURN QUERY SELECT array_to_json(array_agg(row_to_json(t))) FROM (
      WITH riderSalary AS (SELECT * FROM getRiderTotalOrdersAndSalary(month)),
-     riderDeliveryTime AS (SELECT * FROM getAvgDeliveryTime(month)),
+     riderDeliveryTime AS (SELECT* FROM getAvgDeliveryTime(month)),
      riderRatings AS (SELECT * FROM getRiderRatings(month)),
      riderMonthlyHours AS (SELECT * FROM getRiderMonthlyHours(month))
      SELECT t1.outputUid AS uid, t1.outputOrder AS numOfOrders, t1.outputHours AS numOfHours, t1.outputSalary AS salary,

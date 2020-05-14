@@ -19,8 +19,8 @@ const { Pool } = require('pg')
 const db = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'fds',
-    password: 'learning',
+    database: 'fdsdb',
+    password: 'password',
     port: 5432,
 })
 
@@ -75,6 +75,8 @@ app.post('/get_restaurant_reviews_and_ratings', (req, res) => order.getRestauran
 // Food and Restaurants
 app.get('/get_food_data', (req, res) => food.getFoodData(req, res, db))
 app.get('/get_restaurants', (req, res) => food.getRestaurants(req, res, db))
+app.post('/add_availability', (req, res) => food.addAvailability(req, res, db));
+app.post('/minus_availability', (req, res) => food.minusAvailability(req, res, db));
 
 // rider routes
 app.post('/set_t_depart_to_rest', (req, res) => order.setTDepartToRest(req, res, db))
@@ -92,13 +94,16 @@ app.get('/get_total_order', (req, res) => stats.getTotalOrder(req, res, db));
 app.get('/get_total_cost', (req, res) => stats.getTotalCost(req, res, db));
 app.get('/get_total_customers', (req, res) => stats.getTotalCustomers(req, res, db));
 app.post('/get_monthly_stats', (req, res) => stats.getMonthlyStats(req, res, db));
-app.get('/get_thismonth_stats', (req, res) => stats.getThisMonthStats(req,res,db));
+
 
 
 // More Stats
 app.post('/get_rider_monthly_stats', (req, res) => moreStats.getRiderMonthlyStats(req, res, db))
 app.get('/get_delivery_location_stats', (req, res) => moreStats.getDeliveryLocationStats(req, res, db))
 
+// Staff
+//app.get('/get_restaurant_food_data', (req, res) => stats.getRestaurantFoodData(req, res, db));
+app.get('/get_this_month_stats', (req, res) => stats.getThisMonthStats(req, res, db));
 
 // App Server Connection
 app.listen(process.env.PORT || 3000, () => {

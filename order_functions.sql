@@ -221,3 +221,5 @@ EXCEPTION
     RAISE EXCEPTION 'Failed to record time to database';
 END;
 $$ LANGUAGE 'plpgsql';
+
+
