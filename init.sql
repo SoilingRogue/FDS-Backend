@@ -358,7 +358,7 @@ CREATE TABLE PTShift
 (
     week INTEGER CHECK (week >= 1 AND week <= 4),
     day INTEGER CHECK (day >= 1 AND day <= 7),
-    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 <= endTime),
+    startTime INTEGER CHECK (startTime >= 10 AND startTime <= 21 AND startTime < endTime AND startTime + 4 >= endTime),
     endTime INTEGER CHECK (endTime > 10 AND endTime <= 22),
     uid INTEGER NOT NULL,
     PRIMARY KEY (week, day, startTime, endTime, uid),
