@@ -7,7 +7,7 @@ insert into Restaurants(rName, minOrderCost) values('prata house', 10);
 insert into Restaurants(rName, minOrderCost) values('makcik shop', 5);
 insert into Restaurants(rName, minOrderCost) values('astons', 8);
 
-insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(1, 'chicken rice', 1, 100, 2, 4.5);
+insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(1, 'chicken rice', 1, 100, 95, 4.5);
 insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(7, 'steak', 1, 100, 55, 10.0);
 insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(3, 'bubble tea', 0, 100, 0, 2.5);
 insert into FoodItems(rid, foodName, availability, dailyLimit, currentOrders, price) values(2, 'bak kut teh', 1, 40, 40, 3.5);
@@ -82,14 +82,16 @@ select null from addDeliveryRider('rider1@gmail.com', 'password'); -- uid 4
 select null from addDeliveryRider('rider2@gmail.com', 'password'); -- uid 5
 select null from addDeliveryRider('rider3@gmail.com', 'password'); -- uid 6
 select null from addDeliveryRider('rider4@gmail.com', 'password'); -- uid 7
-select null from addRestaurantStaff('staff1@gmail.com', 'password', 1); -- uid 8
-select null from addRestaurantStaff('staff2@gmail.com', 'password', 2); -- uid 9
-select null from addRestaurantStaff('staff3@gmail.com', 'password', 3); -- uid 10
-select null from addRestaurantStaff('staff4@gmail.com', 'password', 4); -- uid 11
-select null from addFdsManager('manager1@gmail.com', 'password'); -- uid 12
-select null from addFdsManager('manager2@gmail.com', 'password'); -- uid 13
-select null from addFdsManager('manager3@gmail.com', 'password'); -- uid 14
-select null from addFdsManager('manager4@gmail.com', 'password'); -- uid 15
+select null from addDeliveryRider('rider5@gmail.com', 'password'); -- uid 8
+select null from addDeliveryRider('rider6@gmail.com', 'password'); -- uid 9
+select null from addRestaurantStaff('staff1@gmail.com', 'password', 1); -- uid 10
+select null from addRestaurantStaff('staff2@gmail.com', 'password', 2); -- uid 11
+select null from addRestaurantStaff('staff3@gmail.com', 'password', 3); -- uid 12
+select null from addRestaurantStaff('staff4@gmail.com', 'password', 4); -- uid 13
+select null from addFdsManager('manager1@gmail.com', 'password'); -- uid 14
+select null from addFdsManager('manager2@gmail.com', 'password'); -- uid 15
+select null from addFdsManager('manager3@gmail.com', 'password'); -- uid 16
+select null from addFdsManager('manager4@gmail.com', 'password'); -- uid 17
 
 -- not used since promotable is not fully completed
 -- INSERT INTO Promotions (pid, startDate, endDate) VALUES
@@ -121,7 +123,7 @@ INSERT INTO PTShift (week, day, startTime, endTime, uid) VALUES
 (1, 3, 12, 16, 4),
 (2, 1, 10, 14, 4),
 (2, 2, 15, 19, 4),
-(2, 4, 16, 20, 4),
+(2, 5, 10, 14, 4),
 (2, 3, 12, 16, 4),
 (3, 1, 10, 14, 4),
 (3, 2, 15, 19, 4),
@@ -136,7 +138,7 @@ INSERT INTO PTShift (week, day, startTime, endTime, uid) VALUES
 (1, 1, 16, 20, 5),
 (1, 5, 12, 16, 5),
 (2, 6, 10, 14, 5),
-(2, 5, 15, 19, 5),
+-- (2, 5, 12, 16, 5),
 (2, 1, 16, 20, 5),
 (2, 3, 12, 16, 5),
 (3, 5, 10, 14, 5),
@@ -150,7 +152,9 @@ INSERT INTO PTShift (week, day, startTime, endTime, uid) VALUES
 
 INSERT INTO FullTimers (uid) VALUES
 (6),
-(7);
+(7),
+(8),
+(9);
 
 INSERT INTO FTShift(sId, start1, end1, start2, end2) VALUES
 (1, 10, 14, 15, 19),
@@ -173,9 +177,29 @@ INSERT INTO MWS(uid, month, sid, day) VALUES
 (7, 5, 2, 2),
 (7, 5, 4, 3),
 (7, 5, 1, 4),
-(7, 5, 2, 5),
+(7, 5, 1, 5),
 (7, 6, 4, 2),
 (7, 6, 2, 3),
-(7, 6, 3, 4),
-(7, 6, 4, 5),
-(7, 6, 1, 6)
+(7, 6, 1, 4),
+(7, 6, 1, 5),
+(7, 6, 1, 6),
+(8, 5, 1, 1), -- Third FullTimer for May, June
+(8, 5, 1, 2),
+(8, 5, 1, 3),
+(8, 5, 1, 4),
+(8, 5, 1, 5),
+(8, 6, 1, 2),
+(8, 6, 1, 3),
+(8, 6, 1, 4),
+(8, 6, 1, 5),
+(8, 6, 1, 6),
+(9, 5, 4, 1), -- Fourth FullTimer for May, June
+(9, 5, 4, 2),
+(9, 5, 4, 3),
+(9, 5, 4, 4),
+(9, 5, 4, 5),
+(9, 6, 4, 2),
+(9, 6, 4, 3),
+(9, 6, 4, 4),
+(9, 6, 4, 5),
+(9, 6, 4, 6);
