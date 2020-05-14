@@ -55,10 +55,10 @@ const validateEmail = (req, res, db) => {
     const { email, userType } = req.body
     db.query(
         `with temp as (
-            select uid, email
+            select uid, email, isActive
             from Users U join ${userType} M using (uid)
         )
-        select * from temp T where T.email = '${email}'`,
+        select * from temp T where T.email = '${email}' and isActive = True`,
         (error, results) => {
             if (error) {
                 console.log(error)
@@ -79,7 +79,7 @@ const validatePassword = (req, res, db) => {
             select *
             from Users U join ${userType} M using (uid)
         )
-        select * from temp T where T.email = '${email}' AND T.password = '${password}'`,
+        select * from temp T where T.email = '${email}' AND isActive = True AND T.password = '${password}'`,
         (error, results) => {
             if (error) {
                 console.log(error)
@@ -98,7 +98,8 @@ const changePassword = (req, res, db) => {
     db.query(
         `update users U
         set password = '${newPassword}'
-        where U.uid = '${uid}'`,
+        where U.uid = '${uid}'
+        and isActive = True`,
         (error, results) => {
             if (error) {
                 console.log(error)
@@ -114,7 +115,8 @@ const changeCreditCard = (req, res, db) => {
     db.query(
         `update customers U
         set creditcard = '${newCreditCard}'
-        where U.uid = '${uid}'`,
+        where U.uid = '${uid}'
+        and (select isActive from Users where uid = '${uid}') = True`,
         (error, results) => {
             if (error) {
                 console.log(error)
@@ -128,8 +130,8 @@ const changeCreditCard = (req, res, db) => {
 const deleteUser = (req, res, db) => {
     const { uid } = req.body
     db.query(
-        `delete from users U
-        where U.uid = '${uid}'`,
+        `update users U set isActive=False
+        where U.uid = '${uid}' and isActive = True`,
         (error, results) => {
             if (error) {
                 console.log(error)

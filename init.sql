@@ -121,6 +121,7 @@ CREATE TABLE Users
     uid SERIAL,
     email VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL,
+    isActive BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (uid)
 );
 

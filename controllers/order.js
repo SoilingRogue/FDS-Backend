@@ -81,7 +81,6 @@ const getPastOrders = (req, res, db) => {
                 res.status(400).json({ error: `DB error: ${error}` })
             }
             else {
-                console.log(results.rows[0]['getpastorders'])
                 res.status(200).json(results.rows[0]['getpastorders'])
             }
     })
